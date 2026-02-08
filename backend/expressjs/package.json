@@ -1,6 +1,6 @@
 {
   "name": "todoit-backend-expressjs",
-  "module": "src/index.ts",
+  "module": "src/app.ts",
   "type": "module",
   "private": true,
   "author": {
@@ -8,7 +8,7 @@
     "email": "hoangquoc2106@gmail.com"
   },
   "scripts": {
-    "start": "bun --watch src/index.ts"
+    "start": "bun --watch src/app.ts"
   },
   "devDependencies": {
     "@types/bun": "latest",

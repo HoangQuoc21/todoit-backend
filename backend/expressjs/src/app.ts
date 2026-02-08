@@ -1,12 +1,10 @@
 import "dotenv/config";
 import express from "express";
-import { middlewares } from "./utils";
-import {
-  categoryRouter,
-  notificationRouter,
-  todoRouter,
-  userRouter,
-} from "./routes";
+import { middlewares } from "./utils/middlewares";
+import { categoryRouter } from "./features/category";
+import { notificationRouter } from "./features/notification";
+import { todoRouter } from "./features/todo";
+import { userRouter } from "./features/user";
 
 const app = express();
 const PORT = process.env.PORT;
