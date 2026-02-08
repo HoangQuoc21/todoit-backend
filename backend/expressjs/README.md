@@ -1,15 +1,15 @@
-# expressjs
+# Create project
+```bash
+bun init -y
 
-To install dependencies:
+bun add express
 
+bun add -d @types/express @types/node typescript nodemon ts-node
+```
+
+# Run project
 ```bash
 bun install
+
+bun start
 ```
-
-To run:
-
-```bash
-bun run index.ts
-```
-
-This project was created using `bun init` in bun v1.3.8. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
