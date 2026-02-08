@@ -13,7 +13,9 @@ const rootHandler: RequestHandler = (req, res, next) => {
 };
 
 const notFoundHandler: RequestHandler = (req, res, next) => {
-  console.warn(`--> notFoundHandler: ${req.originalUrl} not found`);
+  console.warn(
+    `--> notFoundHandler: ${req.method} ${req.originalUrl} not found`,
+  );
   const response: ApiResponse<null> = {
     success: false,
     message: "Route not found",
@@ -24,7 +26,7 @@ const notFoundHandler: RequestHandler = (req, res, next) => {
 };
 
 const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
-  console.error("--> errorHandler:", err.message);
+  console.error(`--> errorHandler: ${err.message} with stack: ${err.stack}`);
   const response: ApiResponse<null> = {
     success: false,
     message: "Internal Server Error",
