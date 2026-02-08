@@ -1,0 +1,24 @@
+{
+  "name": "todoit-backend-expressjs",
+  "module": "src/index.ts",
+  "type": "module",
+  "private": true,
+  "author": {
+    "name": "HoangQuoc2106",
+    "email": "hoangquoc2106@gmail.com"
+  },
+  "scripts": {
+    "start": "bun run src/index.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.2.2"
+  },
+  "peerDependencies": {
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
