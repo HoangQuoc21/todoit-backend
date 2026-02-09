@@ -32,10 +32,14 @@ app.use("/user", userRouter);
 app.use(middlewares.notFoundHandler);
 app.use(middlewares.errorHandler);
 
-await mongoose.connect(process.env.MONGODB_URI!, {
-  dbName: DATABASE_NAME,
-});
-console.log(`--> Connected to MongoDB database: ${DATABASE_NAME}`);
-app.listen(PORT, () => {
-  console.log(`--> Todoit server is running on http://localhost:${PORT}`);
-});
+try {
+  await mongoose.connect(process.env.MONGODB_URI!, {
+    dbName: DATABASE_NAME,
+  });
+  console.log(`--> Connected to MongoDB database: ${DATABASE_NAME}`);
+  app.listen(PORT, () => {
+    console.log(`--> Todoit server is running on http://localhost:${PORT}`);
+  });
+} catch (err) {
+  console.error("--> Failed to connect to MongoDB", err);
+}
