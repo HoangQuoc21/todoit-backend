@@ -4,11 +4,13 @@ import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import cors from "cors";
 
-import { middlewares } from "./utils/middlewares";
-import { categoryRouter } from "./features/category";
-import { notificationRouter } from "./features/notification";
-import { todoRouter } from "./features/todo";
-import { userRouter } from "./features/user";
+import { middlewares } from "./utils";
+import {
+  categoryRouter,
+  notificationRouter,
+  todoRouter,
+  userRouter,
+} from "./features";
 
 const PORT = process.env.PORT;
 
