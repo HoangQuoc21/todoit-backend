@@ -1,6 +1,7 @@
 import type { RequestHandler, ErrorRequestHandler } from "express";
 import { status } from "http-status";
-import type { ApiResponse } from "../types";
+import type { ApiResponse, HttpError } from "../types";
+import type { ValidationError } from "express-validator";
 
 const rootHandler: RequestHandler = (req, res, next) => {
   const response: ApiResponse<null> = {
@@ -25,15 +26,17 @@ const notFoundHandler: RequestHandler = (req, res, next) => {
   res.status(status.NOT_FOUND).json(response);
 };
 
-const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
+const errorHandler: ErrorRequestHandler = (err: HttpError, req, res, next) => {
   console.error(`--> errorHandler: ${err.message} with stack: ${err.stack}`);
-  const response: ApiResponse<null> = {
+  const response: ApiResponse<{ errors: ValidationError[] }> = {
     success: false,
-    message: err.message || "Internal Server Error",
-    data: err.data || null,
+    message: err.message,
+    data: {
+      errors: err.data,
+    },
   };
 
-  res.status(err.status || status.INTERNAL_SERVER_ERROR).json(response);
+  res.status(err.statusCode).json(response);
 };
 
 export const middlewares = {
