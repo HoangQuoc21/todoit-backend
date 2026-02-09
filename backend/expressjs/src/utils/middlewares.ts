@@ -29,11 +29,11 @@ const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   console.error(`--> errorHandler: ${err.message} with stack: ${err.stack}`);
   const response: ApiResponse<null> = {
     success: false,
-    message: "Internal Server Error",
-    data: null,
+    message: err.message || "Internal Server Error",
+    data: err.data || null,
   };
 
-  res.status(status.INTERNAL_SERVER_ERROR).json(response);
+  res.status(err.status || status.INTERNAL_SERVER_ERROR).json(response);
 };
 
 export const middlewares = {
