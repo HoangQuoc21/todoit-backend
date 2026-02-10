@@ -1,5 +1,7 @@
 {
-  "name": "todoit-backend-expressjs",
+  "name": "todoit-backend",
+  "description": "Backend for TodoIt application using Express.js and MongoDB",
+  "version": "1.0.0",
   "module": "src/app.ts",
   "type": "module",
   "private": true,

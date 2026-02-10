@@ -4,7 +4,7 @@ bun init -y
 
 bun add express
 
-bun add -d @types/express @types/node typescript nodemon ts-node
+bun add -d @types/express @types/node typescript
 ```
 
 # Run project
