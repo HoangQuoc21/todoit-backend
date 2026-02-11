@@ -1,7 +1,9 @@
 import type { RequestHandler, ErrorRequestHandler } from "express";
 import { status } from "http-status";
-import type { ApiResponse, HttpError } from "../types";
+import type { ApiResponse } from "../types";
+import { HttpError } from "../types";
 import type { ValidationError } from "express-validator";
+import jwt from "jsonwebtoken";
 
 const rootHandler: RequestHandler = (req, res, next) => {
   const response: ApiResponse<null> = {
@@ -39,8 +41,34 @@ const errorHandler: ErrorRequestHandler = (err: HttpError, req, res, next) => {
   res.status(err.statusCode).json(response);
 };
 
+const isAuthenticatedHandler: RequestHandler = (req, res, next) => {
+  const error = new HttpError(status.UNAUTHORIZED, "Invalid token", []);
+
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      throw error;
+    }
+
+    const token = authHeader.split(" ")[1];
+    if (!token) {
+      throw error;
+    }
+
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY!);
+    if (!decodedToken) {
+      throw error;
+    }
+  } catch (err) {
+    return next(error);
+  }
+
+  next();
+};
+
 export const middlewares = {
   rootHandler,
   notFoundHandler,
   errorHandler,
+  isAuthenticatedHandler,
 };
