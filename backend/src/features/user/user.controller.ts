@@ -40,6 +40,7 @@ const getUser: RequestHandler<{}, {}, {}, { userId: string }> = async (
     }> = {
       success: true,
       message: "Get user successfully",
+      errors: null,
       data: {
         [FORM_FIELDS.USERID]: user._id.toString(),
         [FORM_FIELDS.EMAIL]: user.email,

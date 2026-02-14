@@ -1,13 +1,14 @@
 import type { RequestHandler, ErrorRequestHandler } from "express";
 import { status } from "http-status";
-import { HttpError, type ErrorData, type ApiResponse } from "../types";
-import { userModel } from "../features/user/user.model";
-import { tokenHelper } from "./helpers";
+import { HttpError, type ApiResponse } from "./types";
+import { userModel } from "./features/user/user.model";
+import { tokenHelper } from "./utils/helpers";
 
 const rootHandler: RequestHandler = (req, res, next) => {
-  const response: ApiResponse<null> = {
+  const response: ApiResponse = {
     success: true,
     message: "Welcome to Todoit API",
+    errors: null,
     data: null,
   };
 
@@ -18,9 +19,10 @@ const notFoundHandler: RequestHandler = (req, res, next) => {
   console.warn(
     `--> notFoundHandler: ${req.method} ${req.originalUrl} not found`,
   );
-  const response: ApiResponse<null> = {
+  const response: ApiResponse = {
     success: false,
     message: "Route not found",
+    errors: null,
     data: null,
   };
 
@@ -29,10 +31,11 @@ const notFoundHandler: RequestHandler = (req, res, next) => {
 
 const errorHandler: ErrorRequestHandler = (err: HttpError, req, res, next) => {
   console.error(`--> errorHandler: ${err.message} with stack: ${err.stack}`);
-  const response: ApiResponse<{ errors: ErrorData } | null> = {
+  const response: ApiResponse = {
     success: false,
     message: err.message,
-    data: err.data ? { errors: err.data } : null,
+    errors: err.data,
+    data: null,
   };
 
   res.status(err.statusCode).json(response);

@@ -3,9 +3,10 @@ import { type ApiResponse } from "../../types";
 import { status } from "http-status";
 
 const getCategories: RequestHandler = async (req, res, next) => {
-  const response: ApiResponse<null> = {
+  const response: ApiResponse = {
     success: true,
     message: "Get categories successfully",
+    errors: null,
     data: null,
   };
 

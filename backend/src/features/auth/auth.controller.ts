@@ -41,6 +41,7 @@ const signUp: RequestHandler<
     const response: ApiResponse = {
       success: true,
       message: "User signed up successfully",
+      errors: null,
       data: null,
     };
 
@@ -100,6 +101,7 @@ const signIn: RequestHandler<
     }> = {
       success: true,
       message: "User signed in successfully",
+      errors: null,
       data: {
         [FORM_FIELDS.USERID]: userId,
         [FORM_FIELDS.ACCESS_TOKEN]: accessToken,
@@ -128,10 +130,15 @@ const signOut: RequestHandler = async (req, res, next) => {
   try {
     const userId = tokenHelper.parseToken(accessToken).userId;
     await userModel.findByIdAndUpdate(userId, { accessToken: null });
-    res.status(status.OK).json({
+
+    const response: ApiResponse = {
       success: true,
       message: "User signed out successfully",
-    });
+      errors: null,
+      data: null,
+    };
+
+    res.status(status.OK).json(response);
   } catch (err) {
     next(errorHelper.handleServerError(err as HttpError));
   }
