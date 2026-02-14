@@ -3,4 +3,6 @@ export const FORM_FIELDS = {
   PASSWORD: "password",
   NAME: "name",
   USERID: "userId",
+  ACCESS_TOKEN: "accessToken",
+  REFRESH_TOKEN: "refreshToken",
 };

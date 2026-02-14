@@ -1,16 +1,14 @@
 import express from "express";
-import { body, param, query } from "express-validator";
-import { userModel } from "./user.model";
-import { userController } from "./user.controller";
+import { body } from "express-validator";
+import { userModel } from "../user/user.model";
+import { authController } from "./auth.controller";
 import { FORM_FIELDS, middlewares } from "../../utils";
-import { HttpError } from "../../types";
-import { status } from "http-status/nginx";
 
-const userRouter = express.Router();
+const authRouter = express.Router();
 
 const PASSWORD_MIN_LENGTH = 6;
 
-userRouter.post(
+authRouter.post(
   "/sign-up",
   [
     body(FORM_FIELDS.EMAIL)
@@ -35,10 +33,10 @@ userRouter.post(
       .isEmpty()
       .withMessage("Name is required"),
   ],
-  userController.signUp,
+  authController.signUp,
 );
 
-userRouter.post(
+authRouter.post(
   "/sign-in",
   [
     body(FORM_FIELDS.EMAIL).isEmail().withMessage("Email must be valid"),
@@ -49,31 +47,13 @@ userRouter.post(
         `Password must be at least ${PASSWORD_MIN_LENGTH} characters long`,
       ),
   ],
-
-  userController.signIn,
+  authController.signIn,
 );
 
-userRouter.get(
-  "/",
-  [
-    middlewares.isAuthenticatedHandler,
-    query(FORM_FIELDS.USERID)
-      .trim()
-      .notEmpty()
-      .withMessage(`${FORM_FIELDS.USERID} is required`)
-      .bail()
-      .isMongoId()
-      .withMessage("Invalid MongoDB User ID format")
-      .bail()
-      .custom(async (value) => {
-        const user = await userModel.findById(value);
-        if (!user) {
-          throw new HttpError(status.NOT_FOUND, "User not found", []);
-        }
-        return true;
-      }),
-  ],
-  userController.getUser,
+authRouter.post(
+  "/sign-out",
+  middlewares.isAuthenticatedHandler,
+  authController.signOut,
 );
 
-export { userRouter };
+export { authRouter };

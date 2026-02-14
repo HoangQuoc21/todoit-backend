@@ -1,6 +1,6 @@
 import express from "express";
 import { categoryController } from "./category.controller";
-import { middlewares } from "../../utils";
+import { middlewares } from "../../utils/middlewares";
 
 const categoryRouter = express.Router();
 

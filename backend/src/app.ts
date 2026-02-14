@@ -6,6 +6,7 @@ import cors from "cors";
 
 import { middlewares } from "./utils";
 import {
+  authRouter,
   categoryRouter,
   notificationRouter,
   todoRouter,
@@ -25,6 +26,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 
 app.get("/", middlewares.rootHandler);
+app.use("/auth", authRouter);
 app.use("/category", categoryRouter);
 app.use("/notification", notificationRouter);
 app.use("/todo", todoRouter);

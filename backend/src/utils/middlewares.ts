@@ -1,9 +1,8 @@
 import type { RequestHandler, ErrorRequestHandler } from "express";
 import { status } from "http-status";
-import type { ApiResponse } from "../types";
-import { HttpError } from "../types";
-import type { ValidationError } from "express-validator";
-import jwt from "jsonwebtoken";
+import { HttpError, type ErrorData, type ApiResponse } from "../types";
+import { userModel } from "../features/user/user.model";
+import { tokenHelper } from "./helpers";
 
 const rootHandler: RequestHandler = (req, res, next) => {
   const response: ApiResponse<null> = {
@@ -30,7 +29,7 @@ const notFoundHandler: RequestHandler = (req, res, next) => {
 
 const errorHandler: ErrorRequestHandler = (err: HttpError, req, res, next) => {
   console.error(`--> errorHandler: ${err.message} with stack: ${err.stack}`);
-  const response: ApiResponse<{ errors: ValidationError[] }> = {
+  const response: ApiResponse<{ errors: ErrorData }> = {
     success: false,
     message: err.message,
     data: {
@@ -41,22 +40,36 @@ const errorHandler: ErrorRequestHandler = (err: HttpError, req, res, next) => {
   res.status(err.statusCode).json(response);
 };
 
-const isAuthenticatedHandler: RequestHandler = (req, res, next) => {
-  const error = new HttpError(status.UNAUTHORIZED, "Invalid token", []);
+const isAuthenticatedHandler: RequestHandler = async (req, res, next) => {
+  const error = new HttpError(status.UNAUTHORIZED, "Invalid token", null);
 
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader) {
+    const accessToken = tokenHelper.getTokenFromRequestHeader(req);
+    console.log(
+      "\b --> middlewares.ts:50 --> isAuthenticatedHandler --> accessToken:",
+      accessToken,
+    );
+
+    const parsedToken = tokenHelper.parseToken(accessToken);
+    console.log(
+      "\b --> middlewares.ts:53 --> isAuthenticatedHandler --> parsedToken:",
+      parsedToken,
+    );
+
+    if (!parsedToken.userId || !parsedToken.accessToken) {
       throw error;
     }
 
-    const token = authHeader.split(" ")[1];
-    if (!token) {
-      throw error;
-    }
+    const user = await userModel.findOne({
+      _id: parsedToken.userId,
+      accessToken: parsedToken.accessToken,
+    });
+    console.log(
+      "\b --> middlewares.ts:63 --> isAuthenticatedHandler --> user:",
+      user,
+    );
 
-    const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY!);
-    if (!decodedToken) {
+    if (!user || user.accessToken !== parsedToken.accessToken) {
       throw error;
     }
   } catch (err) {

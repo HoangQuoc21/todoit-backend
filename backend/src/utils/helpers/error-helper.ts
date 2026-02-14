@@ -1,5 +1,5 @@
 import { status } from "http-status";
-import type { HttpError } from "../../types";
+import { HttpError } from "../../types";
 
 const handleServerError = (error: HttpError) => {
   let serverError = error;
