@@ -29,12 +29,10 @@ const notFoundHandler: RequestHandler = (req, res, next) => {
 
 const errorHandler: ErrorRequestHandler = (err: HttpError, req, res, next) => {
   console.error(`--> errorHandler: ${err.message} with stack: ${err.stack}`);
-  const response: ApiResponse<{ errors: ErrorData }> = {
+  const response: ApiResponse<{ errors: ErrorData } | null> = {
     success: false,
     message: err.message,
-    data: {
-      errors: err.data,
-    },
+    data: err.data ? { errors: err.data } : null,
   };
 
   res.status(err.statusCode).json(response);
@@ -45,31 +43,12 @@ const isAuthenticatedHandler: RequestHandler = async (req, res, next) => {
 
   try {
     const accessToken = tokenHelper.getTokenFromRequestHeader(req);
-    console.log(
-      "\b --> middlewares.ts:50 --> isAuthenticatedHandler --> accessToken:",
-      accessToken,
-    );
-
-    const parsedToken = tokenHelper.parseToken(accessToken);
-    console.log(
-      "\b --> middlewares.ts:53 --> isAuthenticatedHandler --> parsedToken:",
-      parsedToken,
-    );
-
-    if (!parsedToken.userId || !parsedToken.accessToken) {
-      throw error;
-    }
 
     const user = await userModel.findOne({
-      _id: parsedToken.userId,
-      accessToken: parsedToken.accessToken,
+      accessToken: accessToken,
     });
-    console.log(
-      "\b --> middlewares.ts:63 --> isAuthenticatedHandler --> user:",
-      user,
-    );
 
-    if (!user || user.accessToken !== parsedToken.accessToken) {
+    if (!user) {
       throw error;
     }
   } catch (err) {

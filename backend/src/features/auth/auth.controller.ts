@@ -3,11 +3,8 @@ import { status } from "http-status";
 import { validationResult } from "express-validator";
 import { hash, compare } from "bcrypt";
 import { userModel } from "../user/user.model";
-import { HttpError } from "../../types/http-error";
-import { errorHelper } from "../../utils/helpers/error-helper";
-import type { ApiResponse } from "../../types/api-response";
-import { FORM_FIELDS } from "../../utils/constants/form-field";
-import { tokenHelper } from "../../utils/helpers/token-helper";
+import { HttpError, type ApiResponse } from "../../types";
+import { errorHelper, FORM_FIELDS, tokenHelper } from "../../utils";
 
 const signUp: RequestHandler<
   {},
@@ -36,6 +33,8 @@ const signUp: RequestHandler<
       email,
       password: hashedPassword,
       name,
+      pushToken: null,
+      accessToken: null,
     });
     await newUser.save();
 
@@ -73,8 +72,8 @@ const signIn: RequestHandler<
     if (!user) {
       const error = new HttpError(
         status.NOT_FOUND,
-        "User A user with this email could not be found",
-        [],
+        "A user with this email could not be found",
+        null,
       );
       throw error;
     }
@@ -84,7 +83,7 @@ const signIn: RequestHandler<
       const error = new HttpError(
         status.UNAUTHORIZED,
         "Incorrect password",
-        [],
+        null,
       );
       throw error;
     }

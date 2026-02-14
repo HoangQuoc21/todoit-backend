@@ -1,6 +1,6 @@
 import type { RequestHandler } from "express";
-import type { ApiResponse } from "../../types";
-import { status } from "http-status/unofficial";
+import { type ApiResponse } from "../../types";
+import { status } from "http-status";
 
 const getCategories: RequestHandler = async (req, res, next) => {
   const response: ApiResponse<null> = {

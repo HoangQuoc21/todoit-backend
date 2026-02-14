@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import { SCHEMA_NAME } from "../../utils/constants";
+import { SCHEMA_NAME } from "../../utils";
 
 const categorySchema = new Schema({
   name: {

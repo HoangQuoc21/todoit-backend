@@ -2,10 +2,8 @@ import type { RequestHandler } from "express";
 import { status } from "http-status";
 import { validationResult } from "express-validator";
 import { userModel } from "./user.model";
-import type { ApiResponse } from "../../types/api-response";
-import { HttpError } from "../../types/http-error";
-import { errorHelper } from "../../utils/helpers/error-helper";
-import { FORM_FIELDS } from "../../utils/constants/form-field";
+import { type ApiResponse, HttpError } from "../../types";
+import { errorHelper, FORM_FIELDS } from "../../utils";
 
 const getUser: RequestHandler<{}, {}, {}, { userId: string }> = async (
   req,
@@ -30,7 +28,7 @@ const getUser: RequestHandler<{}, {}, {}, { userId: string }> = async (
       const error = new HttpError(
         status.NOT_FOUND,
         "User A user with this ID could not be found",
-        [],
+        null,
       );
       throw error;
     }

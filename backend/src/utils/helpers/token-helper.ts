@@ -26,13 +26,13 @@ export const tokenHelper = {
       throw new HttpError(
         status.BAD_REQUEST,
         "No authorization header provided",
-        [],
+        null,
       );
     }
 
     const accessToken = authHeader.split(" ")[1];
     if (!accessToken) {
-      throw new HttpError(status.BAD_REQUEST, "No bearer token provided", []);
+      throw new HttpError(status.BAD_REQUEST, "No bearer token provided", null);
     }
 
     return accessToken;
