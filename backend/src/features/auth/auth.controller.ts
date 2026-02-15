@@ -125,10 +125,8 @@ const signOut: RequestHandler = async (req, res, next) => {
     return next(errorHelper.handleServerError(returnError));
   }
 
-  const accessToken = tokenHelper.getTokenFromRequestHeader(req);
-
   try {
-    const userId = tokenHelper.parseToken(accessToken).userId;
+    const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
     await userModel.findByIdAndUpdate(userId, { accessToken: null });
 
     const response: ApiResponse = {

@@ -4,4 +4,5 @@
  */
 
 export * from "./error-helper";
+export * from "./password-helper";
 export * from "./token-helper";

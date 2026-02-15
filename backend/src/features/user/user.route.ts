@@ -1,8 +1,8 @@
 import express from "express";
-import { query } from "express-validator";
+import { query, body } from "express-validator";
 import { userModel } from "./user.model";
 import { userController } from "./user.controller";
-import { FORM_FIELDS, middlewares } from "../../utils";
+import { FORM_FIELDS, middlewares, PASSWORD_MIN_LENGTH } from "../../utils";
 import { HttpError } from "../../types";
 import { status } from "http-status";
 
@@ -29,6 +29,34 @@ userRouter.get(
       }),
   ],
   userController.getUser,
+);
+
+userRouter.put(
+  "/",
+  [
+    body(FORM_FIELDS.EMAIL)
+      .isEmail()
+      .withMessage("Email must be valid")
+      .normalizeEmail(),
+    body(FORM_FIELDS.PASSWORD)
+      .trim()
+      .isLength({ min: PASSWORD_MIN_LENGTH })
+      .withMessage(
+        `Password must be at least ${PASSWORD_MIN_LENGTH} characters long`,
+      ),
+    body(FORM_FIELDS.NAME)
+      .trim()
+      .not()
+      .isEmpty()
+      .withMessage("Name is required"),
+  ],
+  userController.editUser,
+);
+
+userRouter.delete(
+  "/",
+  middlewares.isAuthenticatedHandler,
+  userController.deleteUser,
 );
 
 export { userRouter };

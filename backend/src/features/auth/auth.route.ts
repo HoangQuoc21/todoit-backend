@@ -2,11 +2,9 @@ import express from "express";
 import { body } from "express-validator";
 import { userModel } from "../user/user.model";
 import { authController } from "./auth.controller";
-import { FORM_FIELDS, middlewares } from "../../utils";
+import { FORM_FIELDS, PASSWORD_MIN_LENGTH, middlewares } from "../../utils";
 
 const authRouter = express.Router();
-
-const PASSWORD_MIN_LENGTH = 6;
 
 authRouter.post(
   "/sign-up",

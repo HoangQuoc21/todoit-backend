@@ -13,8 +13,22 @@ export const tokenHelper = {
     });
     return result.toString();
   },
-  parseToken: (token: string) => {
-    const parts = token.split(".");
+  parseTokenFromRequestHeader: (req: Request) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      throw new HttpError(
+        status.BAD_REQUEST,
+        "No authorization header provided",
+        null,
+      );
+    }
+
+    const accessToken = authHeader.split(" ")[1];
+    if (!accessToken) {
+      throw new HttpError(status.BAD_REQUEST, "No bearer token provided", null);
+    }
+
+    const parts = accessToken.split(".");
     return {
       userId: parts[0],
       accessToken: parts[1],

@@ -6,3 +6,5 @@ export const FORM_FIELDS = {
   ACCESS_TOKEN: "accessToken",
   REFRESH_TOKEN: "refreshToken",
 };
+
+export const PASSWORD_MIN_LENGTH = 6;
