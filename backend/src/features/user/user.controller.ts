@@ -2,15 +2,10 @@ import type { RequestHandler } from "express";
 import { status } from "http-status";
 import { validationResult } from "express-validator";
 import { userModel } from "./user.model";
-import { type ApiResponse, HttpError } from "../../types";
-import {
-  errorHelper,
-  FORM_FIELDS,
-  tokenHelper,
-  passwordHelper,
-} from "../../utils";
+import { type ApiResponse, HttpError, type User } from "../../types";
+import { errorHelper, tokenHelper, passwordHelper } from "../../utils";
 
-const getUser: RequestHandler<{}, {}, {}, { userId: string }> = async (
+const getUser: RequestHandler<{}, {}, {}, { id: string }> = async (
   req,
   res,
   next,
@@ -25,10 +20,10 @@ const getUser: RequestHandler<{}, {}, {}, { userId: string }> = async (
     return next(errorHelper.handleServerError(returnError));
   }
 
-  const { userId } = req.query;
+  const { id } = req.query;
 
   try {
-    const user = await userModel.findById(userId).select("-password");
+    const user = await userModel.findById(id);
     if (!user) {
       const error = new HttpError(
         status.NOT_FOUND,
@@ -38,18 +33,15 @@ const getUser: RequestHandler<{}, {}, {}, { userId: string }> = async (
       throw error;
     }
 
-    const response: ApiResponse<{
-      [FORM_FIELDS.USERID]: string;
-      [FORM_FIELDS.EMAIL]: string;
-      [FORM_FIELDS.NAME]: string;
-    }> = {
+    const response: ApiResponse<User> = {
       success: true,
       message: "Get user successfully",
       errors: null,
       data: {
-        [FORM_FIELDS.USERID]: user._id.toString(),
-        [FORM_FIELDS.EMAIL]: user.email,
-        [FORM_FIELDS.NAME]: user.name,
+        id: user._id.toString(),
+        email: user.email,
+        name: user.name,
+        accessToken: null,
       },
     };
 
@@ -75,12 +67,10 @@ const editUser: RequestHandler<
   }
 
   const { email, password, name } = req.body;
-  const parsedToken = tokenHelper.parseTokenFromRequestHeader(req);
-  const userId = parsedToken.userId;
-  const accessToken = parsedToken.accessToken;
+  const id = tokenHelper.parseTokenFromRequestHeader(req).userId;
 
   try {
-    const user = await userModel.findById(userId);
+    const user = await userModel.findById(id);
     if (!user) {
       const error = new HttpError(
         status.NOT_FOUND,
@@ -98,11 +88,16 @@ const editUser: RequestHandler<
 
     await user.save();
 
-    const response: ApiResponse = {
+    const response: ApiResponse<User> = {
       success: true,
       message: "User updated successfully",
       errors: null,
-      data: null,
+      data: {
+        id: user._id.toString(),
+        email: user.email,
+        name: user.name,
+        accessToken: null,
+      },
     };
 
     res.status(status.OK).json(response);

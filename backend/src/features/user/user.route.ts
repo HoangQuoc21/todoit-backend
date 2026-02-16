@@ -12,10 +12,10 @@ userRouter.get(
   "/",
   [
     middlewares.isAuthenticatedHandler,
-    query(FORM_FIELDS.USERID)
+    query(FORM_FIELDS.ID)
       .trim()
       .notEmpty()
-      .withMessage(`${FORM_FIELDS.USERID} is required`)
+      .withMessage(`${FORM_FIELDS.ID} is required`)
       .bail()
       .isMongoId()
       .withMessage("Invalid MongoDB User ID format")

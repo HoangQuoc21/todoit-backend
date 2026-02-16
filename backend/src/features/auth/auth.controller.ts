@@ -1,10 +1,10 @@
 import type { RequestHandler } from "express";
 import { status } from "http-status";
 import { validationResult } from "express-validator";
-import { hash, compare } from "bcrypt";
+import { compare } from "bcrypt";
 import { userModel } from "../user/user.model";
-import { HttpError, type ApiResponse } from "../../types";
-import { errorHelper, FORM_FIELDS, tokenHelper } from "../../utils";
+import { HttpError, type ApiResponse, type User } from "../../types";
+import { errorHelper, passwordHelper, tokenHelper } from "../../utils";
 
 const signUp: RequestHandler<
   {},
@@ -24,10 +24,7 @@ const signUp: RequestHandler<
   const { email, password, name } = req.body;
 
   try {
-    const hashedPassword = await hash(
-      password,
-      Number(process.env.HASHING_SALT!),
-    );
+    const hashedPassword = await passwordHelper.hashPassword(password);
 
     const newUser = new userModel({
       email,
@@ -36,13 +33,22 @@ const signUp: RequestHandler<
       pushToken: null,
       accessToken: null,
     });
+
+    const accessToken = tokenHelper.generateToken(newUser._id.toString());
+
+    newUser.accessToken = accessToken;
     await newUser.save();
 
-    const response: ApiResponse = {
+    const response: ApiResponse<User> = {
       success: true,
       message: "User signed up successfully",
       errors: null,
-      data: null,
+      data: {
+        id: newUser._id.toString(),
+        email: newUser.email,
+        name: newUser.name,
+        accessToken: newUser.accessToken,
+      },
     };
 
     res.status(status.CREATED).json(response);
@@ -95,16 +101,15 @@ const signIn: RequestHandler<
     user.accessToken = accessToken;
     await user.save();
 
-    const response: ApiResponse<{
-      [FORM_FIELDS.USERID]: string;
-      [FORM_FIELDS.ACCESS_TOKEN]: string;
-    }> = {
+    const response: ApiResponse<User> = {
       success: true,
       message: "User signed in successfully",
       errors: null,
       data: {
-        [FORM_FIELDS.USERID]: userId,
-        [FORM_FIELDS.ACCESS_TOKEN]: accessToken,
+        id: userId,
+        email: user.email,
+        name: user.name,
+        accessToken: user.accessToken,
       },
     };
 

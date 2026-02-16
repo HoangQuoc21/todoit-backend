@@ -2,9 +2,10 @@ export const FORM_FIELDS = {
   EMAIL: "email",
   PASSWORD: "password",
   NAME: "name",
-  USERID: "userId",
+  ID: "id",
   ACCESS_TOKEN: "accessToken",
-  REFRESH_TOKEN: "refreshToken",
+  IS_PUBLIC: "isPublic",
+  CREATED_BY: "createdBy",
 };
 
 export const PASSWORD_MIN_LENGTH = 6;

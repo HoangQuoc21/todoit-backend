@@ -20,4 +20,11 @@ type ApiResponse<T = null> = {
   data: T;
 };
 
-export { type ApiResponse, HttpError };
+type User = {
+  id: string;
+  email: string;
+  name: string;
+  accessToken: string | null;
+};
+
+export { HttpError, type ApiResponse, type User };

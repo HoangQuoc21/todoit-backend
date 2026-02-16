@@ -10,7 +10,8 @@
     "email": "hoangquoc2106@gmail.com"
   },
   "scripts": {
-    "start": "bun --watch src/app.ts"
+    "start": "bun --watch src/app.ts",
+    "compile": "tsc"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
