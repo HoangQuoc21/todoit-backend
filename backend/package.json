@@ -11,7 +11,8 @@
   },
   "scripts": {
     "start": "bun --watch src/app.ts",
-    "compile": "tsc"
+    "compile": "tsc",
+    "lint": "eslint . --ext .ts --fix"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
@@ -25,11 +26,16 @@
     "mongoose": "^9.1.6"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/bcrypt": "^6.0.0",
     "@types/bun": "latest",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
-    "@types/node": "^25.2.2"
+    "@types/node": "^25.2.2",
+    "eslint": "^10.0.0",
+    "globals": "^17.3.0",
+    "jiti": "^2.6.1",
+    "typescript-eslint": "^8.55.0"
   },
   "peerDependencies": {
     "typescript": "^5.9.3"
