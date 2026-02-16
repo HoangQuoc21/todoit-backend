@@ -27,4 +27,11 @@ type User = {
   accessToken: string | null;
 };
 
-export { HttpError, type ApiResponse, type User };
+type Category = {
+  id: string;
+  name: string;
+  isPublic: boolean;
+  isOwner: boolean;
+};
+
+export { HttpError, type ApiResponse, type User, type Category };

@@ -5,11 +5,7 @@ import { userModel } from "./user.model";
 import { type ApiResponse, HttpError, type User } from "../../types";
 import { errorHelper, tokenHelper, passwordHelper } from "../../utils";
 
-const getUser: RequestHandler<{}, {}, {}, { id: string }> = async (
-  req,
-  res,
-  next,
-) => {
+const getUser: RequestHandler<{ id: string }> = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const returnError = new HttpError(
@@ -20,7 +16,7 @@ const getUser: RequestHandler<{}, {}, {}, { id: string }> = async (
     return next(errorHelper.handleServerError(returnError));
   }
 
-  const { id } = req.query;
+  const { id } = req.params;
 
   try {
     const user = await userModel.findById(id);

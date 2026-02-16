@@ -1,5 +1,5 @@
 import express from "express";
-import { query, body } from "express-validator";
+import { body, param } from "express-validator";
 import { userModel } from "./user.model";
 import { userController } from "./user.controller";
 import { FORM_FIELDS, PASSWORD_MIN_LENGTH } from "../../utils";
@@ -10,10 +10,10 @@ import { middlewares } from "../../middlewares";
 const userRouter = express.Router();
 
 userRouter.get(
-  "/",
+  "/:id",
   [
     middlewares.isAuthenticatedHandler,
-    query(FORM_FIELDS.ID)
+    param(FORM_FIELDS.ID)
       .trim()
       .notEmpty()
       .withMessage(`${FORM_FIELDS.ID} is required`)
