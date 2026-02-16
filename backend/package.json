@@ -2,7 +2,7 @@
   "name": "todoit-backend",
   "description": "Backend for TodoIt application using Express.js and MongoDB",
   "version": "1.0.0",
-  "module": "src/app.ts",
+  "module": "app.ts",
   "type": "module",
   "private": true,
   "author": {
@@ -10,7 +10,7 @@
     "email": "hoangquoc2106@gmail.com"
   },
   "scripts": {
-    "start": "bun --watch src/app.ts",
+    "start": "bun --watch app.ts",
     "compile": "tsc",
     "lint": "eslint . --ext .ts --fix"
   },

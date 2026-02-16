@@ -3,6 +3,5 @@
  * Do not modify this file directly.
  */
 
-export * from "../middlewares";
 export * from "./constants";
 export * from "./helpers";

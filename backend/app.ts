@@ -4,14 +4,14 @@ import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import cors from "cors";
 
-import { middlewares } from "./utils";
+import { middlewares } from "./src/middlewares";
 import {
   authRouter,
   categoryRouter,
   notificationRouter,
   todoRouter,
   userRouter,
-} from "./features";
+} from "./src/features";
 
 const PORT = process.env.PORT;
 const DATABASE_NAME = "todoit_db";

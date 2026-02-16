@@ -1,8 +1,9 @@
 import express from "express";
 import { categoryController } from "./category.controller";
-import { FORM_FIELDS, middlewares } from "../../utils";
+import { FORM_FIELDS } from "../../utils";
 import { body, query } from "express-validator";
 import { categoryModel } from "./category.model";
+import { middlewares } from "../../middlewares";
 
 const categoryRouter = express.Router();
 

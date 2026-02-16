@@ -2,9 +2,10 @@ import express from "express";
 import { query, body } from "express-validator";
 import { userModel } from "./user.model";
 import { userController } from "./user.controller";
-import { FORM_FIELDS, middlewares, PASSWORD_MIN_LENGTH } from "../../utils";
+import { FORM_FIELDS, PASSWORD_MIN_LENGTH } from "../../utils";
 import { HttpError } from "../../types";
 import { status } from "http-status";
+import { middlewares } from "../../middlewares";
 
 const userRouter = express.Router();
 
