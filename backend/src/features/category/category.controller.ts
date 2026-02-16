@@ -100,10 +100,17 @@ const createCategory: RequestHandler<
   }
 
   const { name, isPublic } = req.body;
-
   const createdBy = tokenHelper.parseTokenFromRequestHeader(req).userId;
 
   try {
+    const findingName = name.trim().toLowerCase();
+    const existedCategory = await categoryModel.findOne({
+      name: { $regex: new RegExp(`^${findingName}$`, "i") },
+    });
+    if (existedCategory) {
+      throw new HttpError(status.BAD_REQUEST, "Category already exists", null);
+    }
+
     const newCategory = new categoryModel({
       name,
       isPublic,

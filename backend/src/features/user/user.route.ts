@@ -1,10 +1,7 @@
 import express from "express";
 import { body, param } from "express-validator";
-import { userModel } from "./user.model";
 import { userController } from "./user.controller";
 import { FORM_FIELDS, PASSWORD_MIN_LENGTH } from "../../utils";
-import { HttpError } from "../../types";
-import { status } from "http-status";
 import { middlewares } from "../../middlewares";
 
 const userRouter = express.Router();
@@ -19,15 +16,7 @@ userRouter.get(
       .withMessage(`${FORM_FIELDS.ID} is required`)
       .bail()
       .isMongoId()
-      .withMessage("Invalid MongoDB User ID format")
-      .bail()
-      .custom(async (value) => {
-        const user = await userModel.findById(value);
-        if (!user) {
-          throw new HttpError(status.NOT_FOUND, "User not found", null);
-        }
-        return true;
-      }),
+      .withMessage("Invalid MongoDB User ID format"),
   ],
   userController.getUser,
 );

@@ -23,7 +23,7 @@ const getUser: RequestHandler<{ id: string }> = async (req, res, next) => {
     if (!user) {
       const error = new HttpError(
         status.NOT_FOUND,
-        "User A user with this ID could not be found",
+        "A user with this ID could not be found",
         null,
       );
       throw error;
