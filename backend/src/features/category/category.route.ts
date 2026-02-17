@@ -6,12 +6,75 @@ import { middlewares } from "../../middlewares";
 
 const categoryRouter = express.Router();
 
+/**
+ * @openapi
+ * /category/all:
+ *   get:
+ *     summary: Get all categories
+ *     tags: [Category]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of all categories
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                   name:
+ *                     type: string
+ *                   isPublic:
+ *                     type: boolean
+ *       401:
+ *         description: Unauthorized
+ */
 categoryRouter.get(
   "/all",
   middlewares.isAuthenticatedHandler,
   categoryController.getCategories,
 );
 
+/**
+ * @openapi
+ * /category/{id}:
+ *   get:
+ *     summary: Get category by ID
+ *     tags: [Category]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: MongoDB Category ID
+ *     responses:
+ *       200:
+ *         description: Category details retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 name:
+ *                   type: string
+ *                 isPublic:
+ *                   type: boolean
+ *       400:
+ *         description: Invalid category ID format
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Category not found
+ */
 categoryRouter.get(
   "/:id",
   [
@@ -27,6 +90,38 @@ categoryRouter.get(
   categoryController.getCategory,
 );
 
+/**
+ * @openapi
+ * /category:
+ *   post:
+ *     summary: Create a new category
+ *     tags: [Category]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - isPublic
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Category name
+ *               isPublic:
+ *                 type: boolean
+ *                 description: Whether the category is public or private
+ *     responses:
+ *       201:
+ *         description: Category created successfully
+ *       400:
+ *         description: Validation error
+ *       401:
+ *         description: Unauthorized
+ */
 categoryRouter.post(
   "/",
   [
@@ -49,6 +144,47 @@ categoryRouter.post(
   categoryController.createCategory,
 );
 
+/**
+ * @openapi
+ * /category/{id}:
+ *   put:
+ *     summary: Update a category
+ *     tags: [Category]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: MongoDB Category ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - isPublic
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Category name
+ *               isPublic:
+ *                 type: boolean
+ *                 description: Whether the category is public or private
+ *     responses:
+ *       200:
+ *         description: Category updated successfully
+ *       400:
+ *         description: Validation error or invalid category ID
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Category not found
+ */
 categoryRouter.put(
   "/:id",
   [
@@ -77,6 +213,31 @@ categoryRouter.put(
   categoryController.editCategory,
 );
 
+/**
+ * @openapi
+ * /category/{id}:
+ *   delete:
+ *     summary: Delete a category
+ *     tags: [Category]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: MongoDB Category ID
+ *     responses:
+ *       200:
+ *         description: Category deleted successfully
+ *       400:
+ *         description: Invalid category ID format
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Category not found
+ */
 categoryRouter.delete(
   "/:id",
   [
