@@ -34,4 +34,13 @@ type Category = {
   isOwner: boolean;
 };
 
-export { HttpError, type ApiResponse, type User, type Category };
+type Todo = {
+  id: string;
+  title: string;
+  description: string | null;
+  dueDate: number | null;
+  isCompleted: boolean;
+  category: Category | null;
+};
+
+export { HttpError, type ApiResponse, type User, type Category, type Todo };

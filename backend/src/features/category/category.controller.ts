@@ -5,6 +5,7 @@ import { errorHelper, tokenHelper } from "../../utils";
 import { validationResult } from "express-validator";
 import { categoryModel } from "./category.model";
 import { ObjectId } from "mongodb";
+import { todoModel } from "../todo/todo.model";
 
 const getCategories: RequestHandler = async (req, res, next) => {
   const errors = validationResult(req);
@@ -213,17 +214,29 @@ const deleteCategory: RequestHandler<{ id: string }> = async (
   const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
 
   try {
-    const category = await categoryModel.findById(id);
+    const deletingCategory = await categoryModel.findById(id);
 
-    if (!category) {
+    if (!deletingCategory) {
       const error = new HttpError(status.NOT_FOUND, "Category not found", null);
       throw error;
     }
 
-    if (category.createdBy.toString() !== userId) {
+    if (deletingCategory.createdBy.toString() !== userId) {
       const error = new HttpError(
         status.FORBIDDEN,
         "You do not have permission to delete this category",
+        null,
+      );
+      throw error;
+    }
+
+    const todosUsingCategory = await todoModel
+      .find({ category: new ObjectId(id) })
+      .limit(1);
+    if (todosUsingCategory.length > 0) {
+      const error = new HttpError(
+        status.BAD_REQUEST,
+        "Cannot delete category that is being used by todos",
         null,
       );
       throw error;
