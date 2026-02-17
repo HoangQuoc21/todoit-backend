@@ -3,6 +3,8 @@ import express from "express";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import cors from "cors";
+import swaggerUi from "swagger-ui-express";
+import { swaggerSpec } from "./src/services";
 
 import { middlewares } from "./src/middlewares";
 import {
@@ -26,6 +28,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 
 app.get("/", middlewares.rootHandler);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/auth", authRouter);
 app.use("/category", categoryRouter);
 app.use("/notification", notificationRouter);
@@ -41,6 +44,9 @@ try {
   console.log(`--> Connected to MongoDB database: ${DATABASE_NAME}`);
   app.listen(PORT, () => {
     console.log(`--> Todoit server is running on http://localhost:${PORT}`);
+    console.log(
+      `--> API documentation available at http://localhost:${PORT}/api-docs`,
+    );
   });
 } catch (err) {
   console.error("--> Failed to connect to MongoDB", err);
