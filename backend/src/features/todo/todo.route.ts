@@ -3,6 +3,7 @@ import { todoController } from "./todo.controller";
 import { middlewares } from "../../middlewares";
 import { body, param } from "express-validator";
 import { FORM_FIELDS } from "../../utils";
+import { todo } from "node:test";
 
 const todoRouter = express.Router();
 
@@ -57,10 +58,6 @@ todoRouter.put(
       .optional()
       .isNumeric()
       .withMessage(`${FORM_FIELDS.DUE_DATE} must be a numeric timestamp`),
-    body(FORM_FIELDS.IS_COMPLETED)
-      .optional()
-      .isBoolean()
-      .withMessage(`${FORM_FIELDS.IS_COMPLETED} must be a boolean value`),
     body(FORM_FIELDS.CATEGORY_ID)
       .optional()
       .isMongoId()
@@ -78,6 +75,23 @@ todoRouter.delete(
       .withMessage("Invalid MongoDB Category ID format"),
   ],
   todoController.deleteTodo,
+);
+
+todoRouter.patch(
+  "/:id/toggle-completed",
+  [
+    middlewares.isAuthenticatedHandler,
+    param(FORM_FIELDS.ID)
+      .isMongoId()
+      .withMessage("Invalid MongoDB Category ID format"),
+    body(FORM_FIELDS.IS_COMPLETED)
+      .exists()
+      .withMessage(`${FORM_FIELDS.IS_COMPLETED} is required`)
+      .bail()
+      .isBoolean()
+      .withMessage(`${FORM_FIELDS.IS_COMPLETED} must be a boolean value`),
+  ],
+  todoController.toggleCompleted,
 );
 
 export { todoRouter };
