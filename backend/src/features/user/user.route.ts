@@ -6,6 +6,8 @@ import { middlewares } from "../../middlewares";
 
 const userRouter = express.Router();
 
+userRouter.get("/me", middlewares.isAuthenticatedHandler, userController.getMe);
+
 /**
  * @openapi
  * /user/{id}:

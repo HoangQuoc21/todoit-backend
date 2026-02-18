@@ -140,8 +140,50 @@ const deleteUser: RequestHandler = async (req, res, next) => {
   }
 };
 
+const getMe: RequestHandler = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const returnError = new HttpError(
+      status.BAD_REQUEST,
+      "Validation failed",
+      errors.array(),
+    );
+    return next(errorHelper.handleServerError(returnError));
+  }
+
+  try {
+    const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
+    const user = await userModel.findById(userId);
+    if (!user) {
+      const error = new HttpError(
+        status.NOT_FOUND,
+        "A user with this ID could not be found",
+        null,
+      );
+      throw error;
+    }
+
+    const response: ApiResponse<User> = {
+      success: true,
+      message: "Get user successfully",
+      errors: null,
+      data: {
+        id: user._id.toString(),
+        email: user.email,
+        name: user.name,
+        accessToken: null,
+      },
+    };
+
+    res.status(status.OK).json(response);
+  } catch (err) {
+    next(errorHelper.handleServerError(err as HttpError));
+  }
+};
+
 export const userController = {
   getUser,
   editUser,
   deleteUser,
+  getMe,
 };

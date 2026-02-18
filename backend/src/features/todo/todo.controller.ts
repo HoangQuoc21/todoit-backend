@@ -5,6 +5,7 @@ import { HttpError, type ApiResponse, type Todo } from "../../types";
 import status from "http-status";
 import { errorHelper, tokenHelper } from "../../utils";
 import { todoModel } from "./todo.model";
+import { categoryModel } from "../category/category.model";
 
 const createTodo: RequestHandler<
   {},
@@ -217,9 +218,111 @@ const deleteTodo: RequestHandler<{ id: string }> = async (req, res, next) => {
   }
 };
 
+const editTodo: RequestHandler<
+  { id: string },
+  {},
+  {
+    title?: string;
+    description?: string;
+    dueDate?: string;
+    isCompleted?: boolean;
+    categoryId?: string;
+  }
+> = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const returnError = new HttpError(
+      status.BAD_REQUEST,
+      "Validation failed",
+      errors.array(),
+    );
+    return next(errorHelper.handleServerError(returnError));
+  }
+
+  try {
+    const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
+    const todoId = req.params.id;
+    const { title, description, dueDate, isCompleted, categoryId } = req.body;
+
+    if (categoryId) {
+      const categoryExists = await categoryModel.findById(categoryId);
+      if (!categoryExists) {
+        const returnError = new HttpError(
+          status.BAD_REQUEST,
+          "Category with the provided ID does not exist",
+          null,
+        );
+        return next(errorHelper.handleServerError(returnError));
+      }
+    }
+
+    const updatedTodo = await todoModel.findById(todoId);
+
+    if (!updatedTodo) {
+      const returnError = new HttpError(
+        status.NOT_FOUND,
+        "Todo not found",
+        null,
+      );
+      return next(errorHelper.handleServerError(returnError));
+    }
+
+    if (updatedTodo.createdBy.toString() !== userId) {
+      const returnError = new HttpError(
+        status.FORBIDDEN,
+        "You do not have permission to edit this todo",
+        null,
+      );
+      return next(errorHelper.handleServerError(returnError));
+    }
+
+    if (title !== undefined) updatedTodo.title = title;
+    if (description !== undefined) updatedTodo.description = description;
+    if (dueDate !== undefined)
+      updatedTodo.dueDate = dueDate ? parseInt(dueDate) : null;
+    if (isCompleted !== undefined) updatedTodo.isCompleted = isCompleted;
+    if (categoryId !== undefined)
+      updatedTodo.category = categoryId ? new ObjectId(categoryId) : null;
+
+    await updatedTodo.save();
+
+    if (updatedTodo.category) {
+      await updatedTodo.populate("category");
+    }
+
+    const populatedCategory = updatedTodo.category as any;
+
+    const response: ApiResponse<Todo> = {
+      success: true,
+      message: "Todo updated successfully",
+      errors: null,
+      data: {
+        id: updatedTodo._id.toString(),
+        title: updatedTodo.title,
+        description: updatedTodo.description || null,
+        dueDate: updatedTodo.dueDate || null,
+        isCompleted: updatedTodo.isCompleted,
+        category: populatedCategory
+          ? {
+              id: populatedCategory._id.toString(),
+              name: populatedCategory.name,
+              isPublic: populatedCategory.isPublic,
+              isOwner: populatedCategory.createdBy.toString() === userId,
+            }
+          : null,
+      },
+    };
+
+    res.status(status.OK).json(response);
+  } catch (err) {
+    next(errorHelper.handleServerError(err as HttpError));
+  }
+};
+
 export const todoController = {
   createTodo,
   getTodos,
   getTodo,
   deleteTodo,
+  editTodo,
 };
