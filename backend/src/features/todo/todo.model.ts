@@ -18,12 +18,12 @@ const todoSchema = new Schema({
     type: Boolean,
     default: false,
   },
-  category: {
+  categoryId: {
     type: Schema.Types.ObjectId,
     ref: SCHEMA_NAME.CATEGORY,
     required: false,
   },
-  createdBy: {
+  creatorId: {
     type: Schema.Types.ObjectId,
     ref: SCHEMA_NAME.USER,
     required: true,

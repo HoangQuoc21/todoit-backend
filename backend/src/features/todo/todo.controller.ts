@@ -3,7 +3,7 @@ import type { RequestHandler } from "express";
 import { validationResult } from "express-validator";
 import { HttpError, type ApiResponse, type Todo } from "../../types";
 import status from "http-status";
-import { errorHelper, tokenHelper } from "../../utils";
+import { errorHelper, FORM_FIELDS, tokenHelper } from "../../utils";
 import { todoModel } from "./todo.model";
 import { categoryModel } from "../category/category.model";
 
@@ -35,15 +35,15 @@ const createTodo: RequestHandler<
       title,
       description,
       dueDate: dueDate ? parseInt(dueDate) : null,
-      category: categoryId ? new ObjectId(categoryId) : null,
-      createdBy: new ObjectId(userId),
+      creatorId: new ObjectId(userId),
+      categoryId: categoryId ? new ObjectId(categoryId) : null,
     });
 
     if (categoryId) {
-      await newTodo.populate("category");
+      await newTodo.populate(FORM_FIELDS.CATEGORY_ID);
     }
 
-    const populatedCategory = newTodo.category as any;
+    const populatedCategory = newTodo.categoryId as any;
 
     const response: ApiResponse<Todo> = {
       success: true,
@@ -60,7 +60,7 @@ const createTodo: RequestHandler<
               id: populatedCategory._id.toString(),
               name: populatedCategory.name,
               isPublic: populatedCategory.isPublic,
-              isOwner: populatedCategory.createdBy.toString() === userId,
+              isOwner: populatedCategory.creatorId.toString() === userId,
             }
           : null,
       },
@@ -86,15 +86,15 @@ const getTodos: RequestHandler = async (req, res, next) => {
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
     const todos = await todoModel
-      .find({ createdBy: new ObjectId(userId) })
-      .populate("category");
+      .find({ creatorId: new ObjectId(userId) })
+      .populate(FORM_FIELDS.CATEGORY_ID);
 
     const response: ApiResponse<Todo[]> = {
       success: true,
       message: "Todos retrieved successfully",
       errors: null,
       data: todos.map((todo) => {
-        const populatedCategory = todo.category as any;
+        const populatedCategory = todo.categoryId as any;
         return {
           id: todo._id.toString(),
           title: todo.title,
@@ -106,7 +106,7 @@ const getTodos: RequestHandler = async (req, res, next) => {
                 id: populatedCategory._id.toString(),
                 name: populatedCategory.name,
                 isPublic: populatedCategory.isPublic,
-                isOwner: populatedCategory.createdBy.toString() === userId,
+                isOwner: populatedCategory.creatorId.toString() === userId,
               }
             : null,
         };
@@ -135,8 +135,8 @@ const getTodo: RequestHandler<{ id: string }> = async (req, res, next) => {
     const todoId = req.params.id;
 
     const todo = await todoModel
-      .findOne({ _id: new ObjectId(todoId), createdBy: new ObjectId(userId) })
-      .populate("category");
+      .findOne({ _id: new ObjectId(todoId), creatorId: new ObjectId(userId) })
+      .populate(FORM_FIELDS.CATEGORY_ID);
 
     if (!todo) {
       const returnError = new HttpError(
@@ -147,7 +147,7 @@ const getTodo: RequestHandler<{ id: string }> = async (req, res, next) => {
       return next(errorHelper.handleServerError(returnError));
     }
 
-    const populatedCategory = todo.category as any;
+    const populatedCategory = todo.categoryId as any;
 
     const response: ApiResponse<Todo> = {
       success: true,
@@ -164,7 +164,7 @@ const getTodo: RequestHandler<{ id: string }> = async (req, res, next) => {
               id: populatedCategory._id.toString(),
               name: populatedCategory.name,
               isPublic: populatedCategory.isPublic,
-              isOwner: populatedCategory.createdBy.toString() === userId,
+              isOwner: populatedCategory.creatorId.toString() === userId,
             }
           : null,
       },
@@ -193,7 +193,7 @@ const deleteTodo: RequestHandler<{ id: string }> = async (req, res, next) => {
 
     const deletedTodo = await todoModel.findOneAndDelete({
       _id: new ObjectId(todoId),
-      createdBy: new ObjectId(userId),
+      creatorId: new ObjectId(userId),
     });
 
     if (!deletedTodo) {
@@ -267,7 +267,7 @@ const editTodo: RequestHandler<
       return next(errorHelper.handleServerError(returnError));
     }
 
-    if (updatedTodo.createdBy.toString() !== userId) {
+    if (updatedTodo.creatorId.toString() !== userId) {
       const returnError = new HttpError(
         status.FORBIDDEN,
         "You do not have permission to edit this todo",
@@ -282,15 +282,15 @@ const editTodo: RequestHandler<
       updatedTodo.dueDate = dueDate ? parseInt(dueDate) : null;
     if (isCompleted !== undefined) updatedTodo.isCompleted = isCompleted;
     if (categoryId !== undefined)
-      updatedTodo.category = categoryId ? new ObjectId(categoryId) : null;
+      updatedTodo.categoryId = categoryId ? new ObjectId(categoryId) : null;
 
     await updatedTodo.save();
 
-    if (updatedTodo.category) {
-      await updatedTodo.populate("category");
+    if (updatedTodo.categoryId) {
+      await updatedTodo.populate(FORM_FIELDS.CATEGORY_ID);
     }
 
-    const populatedCategory = updatedTodo.category as any;
+    const populatedCategory = updatedTodo.categoryId as any;
 
     const response: ApiResponse<Todo> = {
       success: true,
@@ -307,7 +307,7 @@ const editTodo: RequestHandler<
               id: populatedCategory._id.toString(),
               name: populatedCategory.name,
               isPublic: populatedCategory.isPublic,
-              isOwner: populatedCategory.createdBy.toString() === userId,
+              isOwner: populatedCategory.creatorId.toString() === userId,
             }
           : null,
       },

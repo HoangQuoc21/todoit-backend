@@ -23,7 +23,7 @@ const getCategories: RequestHandler = async (req, res, next) => {
   try {
     const categories = await categoryModel
       .find({
-        $or: [{ isPublic: true }, { createdBy: new ObjectId(userId) }],
+        $or: [{ isPublic: true }, { creatorId: new ObjectId(userId) }],
       })
       .sort({ name: 1 });
 
@@ -35,7 +35,7 @@ const getCategories: RequestHandler = async (req, res, next) => {
         id: category._id.toString(),
         name: category.name,
         isPublic: category.isPublic,
-        isOwner: category.createdBy.toString() === userId,
+        isOwner: category.creatorId.toString() === userId,
       })),
     };
 
@@ -75,7 +75,7 @@ const getCategory: RequestHandler<{ id: string }> = async (req, res, next) => {
         id: category._id.toString(),
         name: category.name,
         isPublic: category.isPublic,
-        isOwner: category.createdBy.toString() === userId,
+        isOwner: category.creatorId.toString() === userId,
       },
     };
 
@@ -101,12 +101,13 @@ const createCategory: RequestHandler<
   }
 
   const { name, isPublic } = req.body;
-  const createdBy = tokenHelper.parseTokenFromRequestHeader(req).userId;
+  const creatorId = tokenHelper.parseTokenFromRequestHeader(req).userId;
 
   try {
     const findingName = name.trim().toLowerCase();
     const existedCategory = await categoryModel.findOne({
       name: { $regex: new RegExp(`^${findingName}$`, "i") },
+      creatorId: new ObjectId(creatorId),
     });
     if (existedCategory) {
       throw new HttpError(status.BAD_REQUEST, "Category already exists", null);
@@ -115,7 +116,7 @@ const createCategory: RequestHandler<
     const newCategory = new categoryModel({
       name,
       isPublic,
-      createdBy,
+      creatorId: new ObjectId(creatorId),
     });
     await newCategory.save();
 
@@ -127,7 +128,7 @@ const createCategory: RequestHandler<
         id: newCategory._id.toString(),
         name: newCategory.name,
         isPublic: newCategory.isPublic,
-        isOwner: newCategory.createdBy.toString() === createdBy,
+        isOwner: newCategory.creatorId.toString() === creatorId,
       },
     };
 
@@ -164,7 +165,7 @@ const editCategory: RequestHandler<
       throw error;
     }
 
-    if (category.createdBy.toString() !== userId) {
+    if (category.creatorId.toString() !== userId) {
       const error = new HttpError(
         status.FORBIDDEN,
         "You do not have permission to edit this category",
@@ -185,7 +186,7 @@ const editCategory: RequestHandler<
         id: category._id.toString(),
         name: category.name,
         isPublic: category.isPublic,
-        isOwner: category.createdBy.toString() === userId,
+        isOwner: category.creatorId.toString() === userId,
       },
     };
 
@@ -221,7 +222,7 @@ const deleteCategory: RequestHandler<{ id: string }> = async (
       throw error;
     }
 
-    if (deletingCategory.createdBy.toString() !== userId) {
+    if (deletingCategory.creatorId.toString() !== userId) {
       const error = new HttpError(
         status.FORBIDDEN,
         "You do not have permission to delete this category",
@@ -231,7 +232,7 @@ const deleteCategory: RequestHandler<{ id: string }> = async (
     }
 
     const todosUsingCategory = await todoModel
-      .find({ category: new ObjectId(id) })
+      .find({ categoryId: new ObjectId(id) })
       .limit(1);
     if (todosUsingCategory.length > 0) {
       const error = new HttpError(

@@ -6,7 +6,7 @@ const categorySchema = new Schema({
     type: String,
     required: true,
   },
-  createdBy: {
+  creatorId: {
     type: Schema.Types.ObjectId,
     ref: SCHEMA_NAME.USER,
     required: true,

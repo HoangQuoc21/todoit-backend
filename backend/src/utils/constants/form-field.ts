@@ -5,7 +5,7 @@ export const FORM_FIELDS = {
   ID: "id",
   ACCESS_TOKEN: "accessToken",
   IS_PUBLIC: "isPublic",
-  CREATED_BY: "createdBy",
+  CREATOR_ID: "creatorId",
   TITLE: "title",
   DESCRIPTION: "description",
   DUE_DATE: "dueDate",
