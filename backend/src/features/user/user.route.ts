@@ -6,6 +6,36 @@ import { middlewares } from "../../middlewares";
 
 const userRouter = express.Router();
 
+/**
+ * @openapi
+ * /user/me:
+ *   get:
+ *     summary: Get current authenticated user's profile
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Current user details retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *       401:
+ *         description: Unauthorized
+ */
 userRouter.get("/me", middlewares.isAuthenticatedHandler, userController.getMe);
 
 /**
