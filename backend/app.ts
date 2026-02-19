@@ -15,10 +15,10 @@ import {
   userRouter,
 } from "./src/features";
 
+dotenv.config({ override: true });
+
 const PORT = process.env.PORT;
 const DATABASE_NAME = "todoit_db";
-
-dotenv.config({ override: true });
 
 const app = express();
 

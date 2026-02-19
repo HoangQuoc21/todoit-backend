@@ -10,11 +10,12 @@
     "email": "hoangquoc2106@gmail.com"
   },
   "scripts": {
-    "start": "bun --watch app.ts",
+    "start": "nodemon --exec tsx app.ts",
     "compile": "tsc",
     "lint": "eslint . --ext .ts --fix"
   },
   "dependencies": {
+    "@types/body-parser": "^1.19.6",
     "@types/swagger-jsdoc": "^6.0.4",
     "bcrypt": "^6.0.0",
     "body-parser": "^2.2.2",
@@ -24,14 +25,17 @@
     "express-validator": "^7.3.1",
     "generate-api-key": "^1.0.2",
     "http-status": "^2.1.0",
+    "mongodb": "^7.1.0",
     "mongoose": "^9.1.6",
+    "nodemon": "^3.1.11",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.1"
+    "swagger-ui-express": "^5.0.1",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.21.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/bcrypt": "^6.0.0",
-    "@types/bun": "latest",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^25.2.2",
