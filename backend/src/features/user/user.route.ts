@@ -156,4 +156,16 @@ userRouter.delete(
   userController.deleteUser,
 );
 
+userRouter.patch(
+  "/update-push-token",
+  [
+    middlewares.isAuthenticatedHandler,
+    body(FORM_FIELDS.PUSH_TOKEN)
+      .trim()
+      .notEmpty()
+      .withMessage(`${FORM_FIELDS.PUSH_TOKEN} is required`),
+  ],
+  userController.updatePushToken,
+);
+
 export { userRouter };

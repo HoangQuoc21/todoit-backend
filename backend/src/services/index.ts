@@ -3,4 +3,5 @@
  * Do not modify this file directly.
  */
 
+export * from "./push-notification";
 export * from "./swagger";

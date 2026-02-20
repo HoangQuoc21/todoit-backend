@@ -107,7 +107,10 @@ const signOut: RequestHandler = async (req, res, next) => {
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
-    await UserModel.findByIdAndUpdate(userId, { accessToken: null });
+    await UserModel.findByIdAndUpdate(userId, {
+      accessToken: null,
+      pushToken: null,
+    });
 
     const response: ApiResponse = {
       success: true,

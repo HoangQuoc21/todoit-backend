@@ -17,6 +17,7 @@ export const FORM_FIELDS = {
   SENT_AT: "sentAt",
   PAGE: "page",
   SIZE: "size",
+  PUSH_TOKEN: "pushToken",
 };
 
 export const PASSWORD_MIN_LENGTH = 6;

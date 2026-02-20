@@ -9,6 +9,8 @@ import {
 import { status } from "http-status";
 import { errorHelper, PAGINATION, tokenHelper } from "@/utils";
 import { NotificationModel } from "./notification.model";
+import { UserModel } from "../user/user.model";
+import { pushNotificationService } from "@/services";
 
 const createNotification: RequestHandler<
   {},
@@ -19,6 +21,17 @@ const createNotification: RequestHandler<
 
   try {
     const { userId, title, content } = req.body;
+    const user = await UserModel.findById(userId);
+
+    if (!user) {
+      throw new HttpError(status.BAD_REQUEST, "User not found", null);
+    }
+
+    const pushResult = await pushNotificationService.sendExpoPushNotification({
+      pushToken: user.pushToken,
+      title,
+      body: content,
+    });
 
     const newNotification = new NotificationModel({
       userId: new ObjectId(userId),
@@ -30,7 +43,7 @@ const createNotification: RequestHandler<
 
     const response: ApiResponse<Notification> = {
       success: true,
-      message: "Notification created successfully",
+      message: `Notification created successfully, push result: ${pushResult.message}`,
       errors: null,
       data: {
         id: newNotification._id.toString(),

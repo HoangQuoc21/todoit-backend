@@ -148,9 +148,47 @@ const getMe: RequestHandler = async (req, res, next) => {
   }
 };
 
+const updatePushToken: RequestHandler<{}, {}, { pushToken: string }> = async (
+  req,
+  res,
+  next,
+) => {
+  errorHelper.handleValidationError(req, next);
+
+  const { pushToken } = req.body;
+  const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
+
+  try {
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      const error = new HttpError(
+        status.NOT_FOUND,
+        "A user with this ID could not be found",
+        null,
+      );
+      throw error;
+    }
+
+    user.pushToken = pushToken;
+    await user.save();
+
+    const response: ApiResponse = {
+      success: true,
+      message: "Push token updated successfully",
+      errors: null,
+      data: null,
+    };
+
+    res.status(status.OK).json(response);
+  } catch (err) {
+    next(errorHelper.handleServerError(err as HttpError));
+  }
+};
+
 export const userController = {
   getUser,
   editUser,
   deleteUser,
   getMe,
+  updatePushToken,
 };
