@@ -21,11 +21,9 @@ const getCategories: RequestHandler = async (req, res, next) => {
   const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
 
   try {
-    const categories = await CategoryModel
-      .find({
-        $or: [{ isPublic: true }, { creatorId: new ObjectId(userId) }],
-      })
-      .sort({ name: 1 });
+    const categories = await CategoryModel.find({
+      $or: [{ isPublic: true }, { creatorId: new ObjectId(userId) }],
+    }).sort({ name: 1 });
 
     const response: ApiResponse<Category[]> = {
       success: true,
@@ -231,9 +229,9 @@ const deleteCategory: RequestHandler<{ id: string }> = async (
       throw error;
     }
 
-    const todosUsingCategory = await TodoModel
-      .find({ categoryId: new ObjectId(id) })
-      .limit(1);
+    const todosUsingCategory = await TodoModel.find({
+      categoryId: new ObjectId(id),
+    }).limit(1);
     if (todosUsingCategory.length > 0) {
       const error = new HttpError(
         status.BAD_REQUEST,
