@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 import type { RequestHandler } from "express";
 import { validationResult } from "express-validator";
 import { HttpError, type ApiResponse, type Todo } from "../../types";
-import status from "http-status";
+import { status } from "http-status";
 import { errorHelper, FORM_FIELDS, tokenHelper } from "../../utils";
 import { TodoModel } from "./todo.model";
 import { CategoryModel } from "../category/category.model";
@@ -85,9 +85,9 @@ const getTodos: RequestHandler = async (req, res, next) => {
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
-    const todos = await TodoModel
-      .find({ creatorId: new ObjectId(userId) })
-      .populate(FORM_FIELDS.CATEGORY_ID);
+    const todos = await TodoModel.find({
+      creatorId: new ObjectId(userId),
+    }).populate(FORM_FIELDS.CATEGORY_ID);
 
     const response: ApiResponse<Todo[]> = {
       success: true,
@@ -134,9 +134,10 @@ const getTodo: RequestHandler<{ id: string }> = async (req, res, next) => {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
     const todoId = req.params.id;
 
-    const todo = await TodoModel
-      .findOne({ _id: new ObjectId(todoId), creatorId: new ObjectId(userId) })
-      .populate(FORM_FIELDS.CATEGORY_ID);
+    const todo = await TodoModel.findOne({
+      _id: new ObjectId(todoId),
+      creatorId: new ObjectId(userId),
+    }).populate(FORM_FIELDS.CATEGORY_ID);
 
     if (!todo) {
       const returnError = new HttpError(
