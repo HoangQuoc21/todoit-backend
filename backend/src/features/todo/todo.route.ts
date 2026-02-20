@@ -26,9 +26,9 @@ const todoRouter = express.Router();
  *               title:
  *                 type: string
  *                 description: Todo title
- *               description:
+ *               content:
  *                 type: string
- *                 description: Todo description (optional)
+ *                 description: Todo content (optional)
  *               dueDate:
  *                 type: number
  *                 description: Due date as numeric timestamp (optional)
@@ -54,7 +54,7 @@ const todoRouter = express.Router();
  *                       type: string
  *                     title:
  *                       type: string
- *                     description:
+ *                     content:
  *                       type: string
  *                       nullable: true
  *                     dueDate:
@@ -75,7 +75,7 @@ todoRouter.post(
   [
     middlewares.isAuthenticatedHandler,
     body(FORM_FIELDS.TITLE).notEmpty().withMessage("Title is required"),
-    body(FORM_FIELDS.DESCRIPTION).optional().isString(),
+    body(FORM_FIELDS.CONTENT).optional().isString(),
     body(FORM_FIELDS.DUE_DATE)
       .optional()
       .isNumeric()
@@ -115,7 +115,7 @@ todoRouter.post(
  *                         type: string
  *                       title:
  *                         type: string
- *                       description:
+ *                       content:
  *                         type: string
  *                         nullable: true
  *                       dueDate:
@@ -167,7 +167,7 @@ todoRouter.get(
  *                       type: string
  *                     title:
  *                       type: string
- *                     description:
+ *                     content:
  *                       type: string
  *                       nullable: true
  *                     dueDate:
@@ -221,9 +221,9 @@ todoRouter.get(
  *               title:
  *                 type: string
  *                 description: Todo title (optional)
- *               description:
+ *               content:
  *                 type: string
- *                 description: Todo description (optional)
+ *                 description: Todo content (optional)
  *               dueDate:
  *                 type: number
  *                 description: Due date as numeric timestamp (optional)
@@ -232,7 +232,32 @@ todoRouter.get(
  *                 description: MongoDB Category ID (optional)
  *     responses:
  *       200:
- *         description: Todo updated successfully
+ *         description: Todo details retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     title:
+ *                       type: string
+ *                     content:
+ *                       type: string
+ *                       nullable: true
+ *                     dueDate:
+ *                       type: string
+ *                       nullable: true
+ *                     isCompleted:
+ *                       type: boolean
+ *                     category:
+ *                       type: object
+ *                       nullable: true
  *       400:
  *         description: Validation error or invalid todo ID
  *       401:
@@ -251,7 +276,7 @@ todoRouter.put(
       .optional()
       .notEmpty()
       .withMessage(`${FORM_FIELDS.TITLE} is required`),
-    body(FORM_FIELDS.DESCRIPTION).optional().isString(),
+    body(FORM_FIELDS.CONTENT).optional().isString(),
     body(FORM_FIELDS.DUE_DATE)
       .optional()
       .isNumeric()
@@ -329,7 +354,32 @@ todoRouter.delete(
  *                 description: New completion status
  *     responses:
  *       200:
- *         description: Todo completion status updated successfully
+ *         description: Todo details retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     title:
+ *                       type: string
+ *                     content:
+ *                       type: string
+ *                       nullable: true
+ *                     dueDate:
+ *                       type: string
+ *                       nullable: true
+ *                     isCompleted:
+ *                       type: boolean
+ *                     category:
+ *                       type: object
+ *                       nullable: true
  *       400:
  *         description: Validation error or invalid todo ID
  *       401:

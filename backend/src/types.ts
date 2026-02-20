@@ -37,7 +37,7 @@ type Category = {
 type Todo = {
   id: string;
   title: string;
-  description: string | null;
+  content: string | null;
   dueDate: number | null;
   isCompleted: boolean;
   category: Category | null;

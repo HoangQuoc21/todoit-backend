@@ -7,7 +7,7 @@ export const FORM_FIELDS = {
   IS_PUBLIC: "isPublic",
   CREATOR_ID: "creatorId",
   TITLE: "title",
-  DESCRIPTION: "description",
+  CONTENT: "content",
   DUE_DATE: "dueDate",
   IS_COMPLETED: "isCompleted",
   CATEGORY_ID: "categoryId",

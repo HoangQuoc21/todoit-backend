@@ -12,7 +12,7 @@ const createTodo: RequestHandler<
   {},
   {
     title: string;
-    description?: string;
+    content?: string;
     dueDate?: string;
     categoryId?: string;
   }
@@ -27,13 +27,13 @@ const createTodo: RequestHandler<
     return next(errorHelper.handleServerError(returnError));
   }
 
-  const { title, description, dueDate, categoryId } = req.body;
+  const { title, content, dueDate, categoryId } = req.body;
   const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
 
   try {
     const newTodo = await todoModel.create({
       title,
-      description,
+      content: content,
       dueDate: dueDate ? parseInt(dueDate) : null,
       creatorId: new ObjectId(userId),
       categoryId: categoryId ? new ObjectId(categoryId) : null,
@@ -52,7 +52,7 @@ const createTodo: RequestHandler<
       data: {
         id: newTodo._id.toString(),
         title: newTodo.title,
-        description: newTodo.description || null,
+        content: newTodo.content || null,
         dueDate: newTodo.dueDate || null,
         isCompleted: newTodo.isCompleted,
         category: populatedCategory
@@ -98,7 +98,7 @@ const getTodos: RequestHandler = async (req, res, next) => {
         return {
           id: todo._id.toString(),
           title: todo.title,
-          description: todo.description || null,
+          content: todo.content || null,
           dueDate: todo.dueDate || null,
           isCompleted: todo.isCompleted,
           category: populatedCategory
@@ -156,7 +156,7 @@ const getTodo: RequestHandler<{ id: string }> = async (req, res, next) => {
       data: {
         id: todo._id.toString(),
         title: todo.title,
-        description: todo.description || null,
+        content: todo.content || null,
         dueDate: todo.dueDate || null,
         isCompleted: todo.isCompleted,
         category: populatedCategory
@@ -223,7 +223,7 @@ const editTodo: RequestHandler<
   {},
   {
     title?: string;
-    description?: string;
+    content?: string;
     dueDate?: string;
     categoryId?: string;
   }
@@ -241,7 +241,7 @@ const editTodo: RequestHandler<
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
     const todoId = req.params.id;
-    const { title, description, dueDate, categoryId } = req.body;
+    const { title, content, dueDate, categoryId } = req.body;
 
     if (categoryId) {
       const categoryExists = await categoryModel.findById(categoryId);
@@ -276,7 +276,7 @@ const editTodo: RequestHandler<
     }
 
     if (title !== undefined) updatedTodo.title = title;
-    if (description !== undefined) updatedTodo.description = description;
+    if (content !== undefined) updatedTodo.content = content;
     if (dueDate !== undefined)
       updatedTodo.dueDate = dueDate ? parseInt(dueDate) : null;
     if (categoryId !== undefined)
@@ -297,7 +297,7 @@ const editTodo: RequestHandler<
       data: {
         id: updatedTodo._id.toString(),
         title: updatedTodo.title,
-        description: updatedTodo.description || null,
+        content: updatedTodo.content || null,
         dueDate: updatedTodo.dueDate || null,
         isCompleted: updatedTodo.isCompleted,
         category: populatedCategory
@@ -364,7 +364,7 @@ const toggleCompleted: RequestHandler<
       data: {
         id: updatedTodo._id.toString(),
         title: updatedTodo.title,
-        description: updatedTodo.description || null,
+        content: updatedTodo.content || null,
         dueDate: updatedTodo.dueDate || null,
         isCompleted: updatedTodo.isCompleted,
         category: populatedCategory

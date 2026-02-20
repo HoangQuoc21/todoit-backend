@@ -1,4 +1,4 @@
-import generateApiKey from "generate-api-key";
+import { generateApiKey } from "generate-api-key";
 import type { Request } from "express";
 import { HttpError } from "../../types";
 import { status } from "http-status";
