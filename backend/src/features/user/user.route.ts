@@ -1,8 +1,8 @@
 import express from "express";
-import { body, param } from "express-validator";
+import { body } from "express-validator";
 import { userController } from "./user.controller";
-import { FORM_FIELDS, PASSWORD_MIN_LENGTH } from "../../utils";
-import { middlewares } from "../../middlewares";
+import { FORM_FIELDS, PASSWORD_MIN_LENGTH } from "@/utils";
+import { middlewares } from "@/middlewares";
 
 const userRouter = express.Router();
 
@@ -76,16 +76,7 @@ userRouter.get("/me", middlewares.isAuthenticatedHandler, userController.getMe);
  */
 userRouter.get(
   "/:id",
-  [
-    middlewares.isAuthenticatedHandler,
-    param(FORM_FIELDS.ID)
-      .trim()
-      .notEmpty()
-      .withMessage(`${FORM_FIELDS.ID} is required`)
-      .bail()
-      .isMongoId()
-      .withMessage("Invalid MongoDB User ID format"),
-  ],
+  [middlewares.isAuthenticatedHandler, middlewares.paramIdValidator],
   userController.getUser,
 );
 

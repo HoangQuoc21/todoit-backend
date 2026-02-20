@@ -1,20 +1,11 @@
 import type { RequestHandler } from "express";
 import { status } from "http-status";
-import { validationResult } from "express-validator";
 import { UserModel } from "./user.model";
-import { type ApiResponse, HttpError, type User } from "../../types";
-import { errorHelper, tokenHelper, passwordHelper } from "../../utils";
+import { type ApiResponse, HttpError, type User } from "@/types";
+import { errorHelper, tokenHelper, passwordHelper } from "@/utils";
 
 const getUser: RequestHandler<{ id: string }> = async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const returnError = new HttpError(
-      status.BAD_REQUEST,
-      "Validation failed",
-      errors.array(),
-    );
-    return next(errorHelper.handleServerError(returnError));
-  }
+  errorHelper.handleValidationError(req, next);
 
   const { id } = req.params;
 
@@ -52,15 +43,7 @@ const editUser: RequestHandler<
   {},
   { email: string; password: string; name: string }
 > = async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const returnError = new HttpError(
-      status.BAD_REQUEST,
-      "Validation failed",
-      errors.array(),
-    );
-    return next(errorHelper.handleServerError(returnError));
-  }
+  errorHelper.handleValidationError(req, next);
 
   const { email, password, name } = req.body;
   const id = tokenHelper.parseTokenFromRequestHeader(req).userId;
@@ -103,15 +86,7 @@ const editUser: RequestHandler<
 };
 
 const deleteUser: RequestHandler = async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const returnError = new HttpError(
-      status.BAD_REQUEST,
-      "Validation failed",
-      errors.array(),
-    );
-    return next(errorHelper.handleServerError(returnError));
-  }
+  errorHelper.handleValidationError(req, next);
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
@@ -141,15 +116,7 @@ const deleteUser: RequestHandler = async (req, res, next) => {
 };
 
 const getMe: RequestHandler = async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const returnError = new HttpError(
-      status.BAD_REQUEST,
-      "Validation failed",
-      errors.array(),
-    );
-    return next(errorHelper.handleServerError(returnError));
-  }
+  errorHelper.handleValidationError(req, next);
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;

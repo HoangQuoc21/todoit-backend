@@ -1,14 +1,13 @@
 import { ObjectId } from "mongodb";
 import type { RequestHandler } from "express";
-import { validationResult } from "express-validator";
 import {
   HttpError,
   type ApiResponse,
   type ListResponse,
   type Notification,
-} from "../../types";
+} from "@/types";
 import { status } from "http-status";
-import { errorHelper, PAGINATION, tokenHelper } from "../../utils";
+import { errorHelper, PAGINATION, tokenHelper } from "@/utils";
 import { NotificationModel } from "./notification.model";
 
 const createNotification: RequestHandler<
@@ -16,15 +15,7 @@ const createNotification: RequestHandler<
   {},
   { userId: string; title: string; content?: string }
 > = async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const returnError = new HttpError(
-      status.BAD_REQUEST,
-      "Validation failed",
-      errors.array(),
-    );
-    return next(errorHelper.handleServerError(returnError));
-  }
+  errorHelper.handleValidationError(req, next);
 
   try {
     const { userId, title, content } = req.body;
@@ -62,15 +53,7 @@ const getNotifications: RequestHandler = async (
   res,
   next,
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const returnError = new HttpError(
-      status.BAD_REQUEST,
-      "Validation failed",
-      errors.array(),
-    );
-    return next(errorHelper.handleServerError(returnError));
-  }
+  errorHelper.handleValidationError(req as any, next);
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req as any).userId;
@@ -121,15 +104,7 @@ const getNotification: RequestHandler<{ id: string }> = async (
   res,
   next,
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const returnError = new HttpError(
-      status.BAD_REQUEST,
-      "Validation failed",
-      errors.array(),
-    );
-    return next(errorHelper.handleServerError(returnError));
-  }
+  errorHelper.handleValidationError(req, next);
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
@@ -171,15 +146,7 @@ const getNotification: RequestHandler<{ id: string }> = async (
 };
 
 const getUnreadCount: RequestHandler = async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const returnError = new HttpError(
-      status.BAD_REQUEST,
-      "Validation failed",
-      errors.array(),
-    );
-    return next(errorHelper.handleServerError(returnError));
-  }
+  errorHelper.handleValidationError(req, next);
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
@@ -203,15 +170,7 @@ const getUnreadCount: RequestHandler = async (req, res, next) => {
 };
 
 const markRead: RequestHandler<{ id: string }> = async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const returnError = new HttpError(
-      status.BAD_REQUEST,
-      "Validation failed",
-      errors.array(),
-    );
-    return next(errorHelper.handleServerError(returnError));
-  }
+  errorHelper.handleValidationError(req, next);
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
@@ -250,15 +209,7 @@ const markRead: RequestHandler<{ id: string }> = async (req, res, next) => {
 };
 
 const markReadAll: RequestHandler = async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const returnError = new HttpError(
-      status.BAD_REQUEST,
-      "Validation failed",
-      errors.array(),
-    );
-    return next(errorHelper.handleServerError(returnError));
-  }
+  errorHelper.handleValidationError(req, next);
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
@@ -282,15 +233,7 @@ const markReadAll: RequestHandler = async (req, res, next) => {
 };
 
 const deleteNotifications: RequestHandler = async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const returnError = new HttpError(
-      status.BAD_REQUEST,
-      "Validation failed",
-      errors.array(),
-    );
-    return next(errorHelper.handleServerError(returnError));
-  }
+  errorHelper.handleValidationError(req, next);
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
@@ -315,15 +258,7 @@ const deleteNotification: RequestHandler<{ id: string }> = async (
   res,
   next,
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const returnError = new HttpError(
-      status.BAD_REQUEST,
-      "Validation failed",
-      errors.array(),
-    );
-    return next(errorHelper.handleServerError(returnError));
-  }
+  errorHelper.handleValidationError(req, next);
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;

@@ -17,7 +17,7 @@ import {
 
 dotenv.config({ override: true, debug: true });
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT!;
 const DATABASE_NAME = "todoit_db";
 
 const app = express();

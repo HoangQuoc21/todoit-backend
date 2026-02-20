@@ -1,8 +1,8 @@
 import express from "express";
 import { categoryController } from "./category.controller";
-import { FORM_FIELDS } from "../../utils/constants/form-field";
-import { body, param, query } from "express-validator";
-import { middlewares } from "../../middlewares";
+import { FORM_FIELDS } from "@/utils/constants/form-field";
+import { body } from "express-validator";
+import { middlewares } from "@/middlewares";
 
 const categoryRouter = express.Router();
 
@@ -35,17 +35,7 @@ const categoryRouter = express.Router();
  */
 categoryRouter.get(
   "/all",
-  [
-    middlewares.isAuthenticatedHandler,
-    query(FORM_FIELDS.PAGE)
-      .optional()
-      .isInt({ min: 0 })
-      .withMessage(`${FORM_FIELDS.PAGE} must be a non-negative integer`),
-    query(FORM_FIELDS.SIZE)
-      .optional()
-      .isInt({ min: 1 })
-      .withMessage(`${FORM_FIELDS.SIZE} must be a positive integer`),
-  ],
+  [middlewares.isAuthenticatedHandler, ...middlewares.paginationValidators],
   categoryController.getCategories,
 );
 
@@ -87,16 +77,7 @@ categoryRouter.get(
  */
 categoryRouter.get(
   "/:id",
-  [
-    middlewares.isAuthenticatedHandler,
-    param(FORM_FIELDS.ID)
-      .trim()
-      .notEmpty()
-      .withMessage(`${FORM_FIELDS.ID} is required`)
-      .bail()
-      .isMongoId()
-      .withMessage("Invalid MongoDB Category ID format"),
-  ],
+  [middlewares.isAuthenticatedHandler, middlewares.paramIdValidator],
   categoryController.getCategory,
 );
 
@@ -199,13 +180,7 @@ categoryRouter.put(
   "/:id",
   [
     middlewares.isAuthenticatedHandler,
-    param(FORM_FIELDS.ID)
-      .trim()
-      .notEmpty()
-      .withMessage(`${FORM_FIELDS.ID} is required`)
-      .bail()
-      .isMongoId()
-      .withMessage("Invalid MongoDB Category ID format"),
+    middlewares.paramIdValidator,
     body(FORM_FIELDS.NAME)
       .exists()
       .trim()
@@ -250,16 +225,7 @@ categoryRouter.put(
  */
 categoryRouter.delete(
   "/:id",
-  [
-    middlewares.isAuthenticatedHandler,
-    param(FORM_FIELDS.ID)
-      .trim()
-      .notEmpty()
-      .withMessage(`${FORM_FIELDS.ID} is required`)
-      .bail()
-      .isMongoId()
-      .withMessage("Invalid MongoDB Category ID format"),
-  ],
+  [middlewares.isAuthenticatedHandler, middlewares.paramIdValidator],
   categoryController.deleteCategory,
 );
 

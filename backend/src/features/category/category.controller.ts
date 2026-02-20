@@ -4,10 +4,9 @@ import {
   type ApiResponse,
   type Category,
   type ListResponse,
-} from "../../types";
+} from "@/types";
 import { status } from "http-status";
-import { errorHelper, PAGINATION, tokenHelper } from "../../utils";
-import { validationResult } from "express-validator";
+import { errorHelper, PAGINATION, tokenHelper } from "@/utils";
 import { CategoryModel } from "./category.model";
 import { ObjectId } from "mongodb";
 import { TodoModel } from "../todo/todo.model";
@@ -19,15 +18,7 @@ const getCategories: RequestHandler = async (
   res,
   next,
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const returnError = new HttpError(
-      status.BAD_REQUEST,
-      "Validation failed",
-      errors.array(),
-    );
-    return next(errorHelper.handleServerError(returnError));
-  }
+  errorHelper.handleValidationError(req as any, next);
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req as any).userId;
@@ -72,15 +63,7 @@ const getCategories: RequestHandler = async (
 };
 
 const getCategory: RequestHandler<{ id: string }> = async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const returnError = new HttpError(
-      status.BAD_REQUEST,
-      "Validation failed",
-      errors.array(),
-    );
-    return next(errorHelper.handleServerError(returnError));
-  }
+  errorHelper.handleValidationError(req, next);
 
   const { id } = req.params;
   const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
@@ -116,15 +99,7 @@ const createCategory: RequestHandler<
   {},
   { name: string; isPublic: boolean }
 > = async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const returnError = new HttpError(
-      status.BAD_REQUEST,
-      "Validation failed",
-      errors.array(),
-    );
-    return next(errorHelper.handleServerError(returnError));
-  }
+  errorHelper.handleValidationError(req, next);
 
   const { name, isPublic } = req.body;
   const creatorId = tokenHelper.parseTokenFromRequestHeader(req).userId;
@@ -169,15 +144,7 @@ const editCategory: RequestHandler<
   {},
   { name: string; isPublic: boolean }
 > = async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const returnError = new HttpError(
-      status.BAD_REQUEST,
-      "Validation failed",
-      errors.array(),
-    );
-    return next(errorHelper.handleServerError(returnError));
-  }
+  errorHelper.handleValidationError(req, next);
 
   const { id } = req.params;
   const { name, isPublic } = req.body;
@@ -227,15 +194,7 @@ const deleteCategory: RequestHandler<{ id: string }> = async (
   res,
   next,
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const returnError = new HttpError(
-      status.BAD_REQUEST,
-      "Validation failed",
-      errors.array(),
-    );
-    return next(errorHelper.handleServerError(returnError));
-  }
+  errorHelper.handleValidationError(req, next);
 
   const { id } = req.params;
   const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;

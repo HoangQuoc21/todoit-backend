@@ -1,25 +1,16 @@
 import type { RequestHandler } from "express";
 import { status } from "http-status";
-import { validationResult } from "express-validator";
 import { compare } from "bcrypt";
 import { UserModel } from "../user/user.model";
-import { HttpError, type ApiResponse, type User } from "../../types";
-import { errorHelper, passwordHelper, tokenHelper } from "../../utils";
+import { HttpError, type ApiResponse, type User } from "@/types";
+import { errorHelper, passwordHelper, tokenHelper } from "@/utils";
 
 const signUp: RequestHandler<
   {},
   {},
   { email: string; password: string; name: string }
 > = async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const returnError = new HttpError(
-      status.BAD_REQUEST,
-      "Validation failed",
-      errors.array(),
-    );
-    return next(errorHelper.handleServerError(returnError));
-  }
+  errorHelper.handleValidationError(req, next);
 
   const { email, password, name } = req.body;
 
@@ -62,15 +53,7 @@ const signIn: RequestHandler<
   {},
   { email: string; password: string }
 > = async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const returnError = new HttpError(
-      status.BAD_REQUEST,
-      "Validation failed",
-      errors.array(),
-    );
-    return next(errorHelper.handleServerError(returnError));
-  }
+  errorHelper.handleValidationError(req, next);
 
   const { email, password } = req.body;
 
@@ -120,15 +103,7 @@ const signIn: RequestHandler<
 };
 
 const signOut: RequestHandler = async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const returnError = new HttpError(
-      status.BAD_REQUEST,
-      "Validation failed",
-      errors.array(),
-    );
-    return next(errorHelper.handleServerError(returnError));
-  }
+  errorHelper.handleValidationError(req, next);
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;

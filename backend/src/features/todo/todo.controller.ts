@@ -1,14 +1,13 @@
 import { ObjectId } from "mongodb";
 import type { RequestHandler } from "express";
-import { validationResult } from "express-validator";
 import {
   HttpError,
   type ApiResponse,
   type ListResponse,
   type Todo,
-} from "../../types";
+} from "@/types";
 import { status } from "http-status";
-import { errorHelper, FORM_FIELDS, PAGINATION, tokenHelper } from "../../utils";
+import { errorHelper, FORM_FIELDS, PAGINATION, tokenHelper } from "@/utils";
 import { TodoModel } from "./todo.model";
 import { CategoryModel } from "../category/category.model";
 
@@ -22,15 +21,7 @@ const createTodo: RequestHandler<
     categoryId?: string;
   }
 > = async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const returnError = new HttpError(
-      status.BAD_REQUEST,
-      "Validation failed",
-      errors.array(),
-    );
-    return next(errorHelper.handleServerError(returnError));
-  }
+  errorHelper.handleValidationError(req, next);
 
   const { title, content, dueDate, categoryId } = req.body;
   const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
@@ -84,15 +75,7 @@ const getTodos: RequestHandler = async (
   res,
   next,
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const returnError = new HttpError(
-      status.BAD_REQUEST,
-      "Validation failed",
-      errors.array(),
-    );
-    return next(errorHelper.handleServerError(returnError));
-  }
+  errorHelper.handleValidationError(req as any, next);
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req as any).userId;
@@ -146,15 +129,7 @@ const getTodos: RequestHandler = async (
 };
 
 const getTodo: RequestHandler<{ id: string }> = async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const returnError = new HttpError(
-      status.BAD_REQUEST,
-      "Validation failed",
-      errors.array(),
-    );
-    return next(errorHelper.handleServerError(returnError));
-  }
+  errorHelper.handleValidationError(req, next);
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
@@ -204,15 +179,7 @@ const getTodo: RequestHandler<{ id: string }> = async (req, res, next) => {
 };
 
 const deleteTodo: RequestHandler<{ id: string }> = async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const returnError = new HttpError(
-      status.BAD_REQUEST,
-      "Validation failed",
-      errors.array(),
-    );
-    return next(errorHelper.handleServerError(returnError));
-  }
+  errorHelper.handleValidationError(req, next);
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
@@ -255,15 +222,7 @@ const editTodo: RequestHandler<
     categoryId?: string;
   }
 > = async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const returnError = new HttpError(
-      status.BAD_REQUEST,
-      "Validation failed",
-      errors.array(),
-    );
-    return next(errorHelper.handleServerError(returnError));
-  }
+  errorHelper.handleValidationError(req, next);
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
@@ -349,15 +308,7 @@ const toggleCompleted: RequestHandler<
   {},
   { isCompleted: boolean }
 > = async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const returnError = new HttpError(
-      status.BAD_REQUEST,
-      "Validation failed",
-      errors.array(),
-    );
-    return next(errorHelper.handleServerError(returnError));
-  }
+  errorHelper.handleValidationError(req, next);
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;

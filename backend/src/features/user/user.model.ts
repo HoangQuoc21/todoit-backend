@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import { SCHEMA_NAME } from "../../utils/constants/schema-name";
+import { SCHEMA_NAME } from "@/utils/constants/schema-name";
 
 const UserSchema = new Schema({
   email: {

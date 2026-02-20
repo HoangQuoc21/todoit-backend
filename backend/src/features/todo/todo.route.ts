@@ -1,8 +1,8 @@
 import express from "express";
 import { todoController } from "./todo.controller";
-import { middlewares } from "../../middlewares";
-import { body, param, query } from "express-validator";
-import { FORM_FIELDS } from "../../utils";
+import { middlewares } from "@/middlewares";
+import { body } from "express-validator";
+import { FORM_FIELDS } from "@/utils";
 
 const todoRouter = express.Router();
 
@@ -131,17 +131,7 @@ todoRouter.post(
  */
 todoRouter.get(
   "/all",
-  [
-    middlewares.isAuthenticatedHandler,
-    query(FORM_FIELDS.PAGE)
-      .optional()
-      .isInt({ min: 0 })
-      .withMessage(`${FORM_FIELDS.PAGE} must be a non-negative integer`),
-    query(FORM_FIELDS.SIZE)
-      .optional()
-      .isInt({ min: 1 })
-      .withMessage(`${FORM_FIELDS.SIZE} must be a positive integer`),
-  ],
+  [middlewares.isAuthenticatedHandler, ...middlewares.paginationValidators],
   todoController.getTodos,
 );
 
@@ -197,12 +187,7 @@ todoRouter.get(
  */
 todoRouter.get(
   "/:id",
-  [
-    middlewares.isAuthenticatedHandler,
-    param(FORM_FIELDS.ID)
-      .isMongoId()
-      .withMessage("Invalid MongoDB Category ID format"),
-  ],
+  [middlewares.isAuthenticatedHandler, middlewares.paramIdValidator],
   todoController.getTodo,
 );
 
@@ -279,9 +264,7 @@ todoRouter.put(
   "/:id",
   [
     middlewares.isAuthenticatedHandler,
-    param(FORM_FIELDS.ID)
-      .isMongoId()
-      .withMessage("Invalid MongoDB Category ID format"),
+    middlewares.paramIdValidator,
     body(FORM_FIELDS.TITLE)
       .optional()
       .notEmpty()
@@ -326,12 +309,7 @@ todoRouter.put(
  */
 todoRouter.delete(
   "/:id",
-  [
-    middlewares.isAuthenticatedHandler,
-    param(FORM_FIELDS.ID)
-      .isMongoId()
-      .withMessage("Invalid MongoDB Category ID format"),
-  ],
+  [middlewares.isAuthenticatedHandler, middlewares.paramIdValidator],
   todoController.deleteTodo,
 );
 
@@ -401,9 +379,7 @@ todoRouter.patch(
   "/:id/toggle-completed",
   [
     middlewares.isAuthenticatedHandler,
-    param(FORM_FIELDS.ID)
-      .isMongoId()
-      .withMessage("Invalid MongoDB Category ID format"),
+    middlewares.paramIdValidator,
     body(FORM_FIELDS.IS_COMPLETED)
       .exists()
       .withMessage(`${FORM_FIELDS.IS_COMPLETED} is required`)

@@ -3,6 +3,8 @@ import { status } from "http-status";
 import { HttpError, type ApiResponse } from "./types";
 import { UserModel } from "./features/user/user.model";
 import { tokenHelper } from "./utils/helpers";
+import { param, query } from "express-validator";
+import { FORM_FIELDS } from "./utils";
 
 const rootHandler: RequestHandler = (req, res, next) => {
   const response: ApiResponse = {
@@ -61,9 +63,30 @@ const isAuthenticatedHandler: RequestHandler = async (req, res, next) => {
   next();
 };
 
+const paginationValidators = [
+  query(FORM_FIELDS.PAGE)
+    .optional()
+    .isInt({ min: 0 })
+    .withMessage(`${FORM_FIELDS.PAGE} must be a non-negative integer`),
+  query(FORM_FIELDS.SIZE)
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage(`${FORM_FIELDS.SIZE} must be a positive integer`),
+];
+
+const paramIdValidator = param(FORM_FIELDS.ID)
+  .trim()
+  .notEmpty()
+  .withMessage(`${FORM_FIELDS.ID} is required`)
+  .bail()
+  .isMongoId()
+  .withMessage("Invalid MongoDB Category ID format");
+
 export const middlewares = {
   rootHandler,
   notFoundHandler,
   errorHandler,
   isAuthenticatedHandler,
+  paginationValidators,
+  paramIdValidator,
 };
