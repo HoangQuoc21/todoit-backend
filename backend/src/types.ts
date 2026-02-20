@@ -43,4 +43,19 @@ type Todo = {
   category: Category | null;
 };
 
-export { HttpError, type ApiResponse, type User, type Category, type Todo };
+type Notification = {
+  id: string;
+  title: string;
+  content: string | null;
+  isRead: boolean;
+  sentAt: number;
+};
+
+export {
+  HttpError,
+  type ApiResponse,
+  type User,
+  type Category,
+  type Todo,
+  type Notification,
+};

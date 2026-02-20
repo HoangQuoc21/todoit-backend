@@ -11,6 +11,10 @@ export const FORM_FIELDS = {
   DUE_DATE: "dueDate",
   IS_COMPLETED: "isCompleted",
   CATEGORY_ID: "categoryId",
+  NOTIFICATION_ID: "notificationId",
+  USER_ID: "userId",
+  IS_READ: "isRead",
+  SENT_AT: "sentAt",
 };
 
 export const PASSWORD_MIN_LENGTH = 6;
