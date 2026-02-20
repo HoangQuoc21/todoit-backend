@@ -26,8 +26,12 @@ const signUp: RequestHandler<
     });
 
     const accessToken = tokenHelper.generateToken(newUser._id.toString());
-
     newUser.accessToken = accessToken;
+
+    if (req.file) {
+      newUser.image = req.file.path;
+    }
+
     await newUser.save();
 
     const response: ApiResponse<User> = {
@@ -38,6 +42,7 @@ const signUp: RequestHandler<
         id: newUser._id.toString(),
         email: newUser.email,
         name: newUser.name,
+        image: newUser.image ?? null,
         accessToken: newUser.accessToken,
       },
     };
@@ -92,6 +97,7 @@ const signIn: RequestHandler<
         id: userId,
         email: user.email,
         name: user.name,
+        image: user.image ?? null,
         accessToken: user.accessToken,
       },
     };

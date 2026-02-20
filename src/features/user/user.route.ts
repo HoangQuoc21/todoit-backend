@@ -117,11 +117,14 @@ userRouter.get(
 userRouter.put(
   "/",
   [
+    middlewares.isAuthenticatedHandler,
+    middlewares.imageUploadHandler,
     body(FORM_FIELDS.EMAIL)
       .isEmail()
       .withMessage("Email must be valid")
       .normalizeEmail(),
     body(FORM_FIELDS.PASSWORD)
+      .optional()
       .trim()
       .isLength({ min: PASSWORD_MIN_LENGTH })
       .withMessage(

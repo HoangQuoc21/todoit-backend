@@ -1,3 +1,4 @@
+import type { ThirdPartyResponse } from "@/types";
 import {
   Expo,
   type ExpoPushErrorReceipt,
@@ -11,14 +12,9 @@ type SendRequest = {
   body?: string;
 };
 
-type SendResult = {
-  success: boolean;
-  message: string;
-};
-
 const sendExpoPushNotification = async (
   request: SendRequest,
-): Promise<SendResult> => {
+): Promise<ThirdPartyResponse> => {
   const { pushToken, title, body } = request;
 
   if (!pushToken) {
@@ -54,7 +50,7 @@ const sendExpoPushNotification = async (
     }
   }
 
-  let response: SendResult = {
+  let response: ThirdPartyResponse = {
     success: false,
     message: "Failed to send push notification",
   };

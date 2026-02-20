@@ -24,6 +24,7 @@ type User = {
   id: string;
   email: string;
   name: string;
+  image: string | null;
   accessToken: string | null;
 };
 
@@ -61,6 +62,11 @@ type ListResponse<T> = {
   items: T[];
 };
 
+type ThirdPartyResponse = {
+  success: boolean;
+  message: string;
+};
+
 export {
   HttpError,
   type ApiResponse,
@@ -69,4 +75,5 @@ export {
   type Todo,
   type Notification,
   type ListResponse,
+  type ThirdPartyResponse,
 };

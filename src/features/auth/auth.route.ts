@@ -44,6 +44,7 @@ const authRouter = express.Router();
 authRouter.post(
   "/sign-up",
   [
+    middlewares.imageUploadHandler,
     body(FORM_FIELDS.EMAIL)
       .isEmail()
       .withMessage("Email must be valid")

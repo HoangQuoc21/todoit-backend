@@ -3,6 +3,7 @@ import { status } from "http-status";
 import { UserModel } from "./user.model";
 import { type ApiResponse, HttpError, type User } from "@/types";
 import { errorHelper, tokenHelper, passwordHelper } from "@/utils";
+import { cloudinaryService } from "@/services";
 
 const getUser: RequestHandler<{ id: string }> = async (req, res, next) => {
   errorHelper.handleValidationError(req, next);
@@ -28,6 +29,7 @@ const getUser: RequestHandler<{ id: string }> = async (req, res, next) => {
         id: user._id.toString(),
         email: user.email,
         name: user.name,
+        image: user.image ?? null,
         accessToken: null,
       },
     };
@@ -41,7 +43,7 @@ const getUser: RequestHandler<{ id: string }> = async (req, res, next) => {
 const editUser: RequestHandler<
   {},
   {},
-  { email: string; password: string; name: string }
+  { email: string; password?: string; name: string }
 > = async (req, res, next) => {
   errorHelper.handleValidationError(req, next);
 
@@ -61,8 +63,11 @@ const editUser: RequestHandler<
 
     user.email = email;
     user.name = name;
-    if (password !== user.password) {
+    if (password && password !== user.password) {
       user.password = await passwordHelper.hashPassword(password);
+    }
+    if (req.file) {
+      user.image = req.file.path;
     }
 
     await user.save();
@@ -75,6 +80,7 @@ const editUser: RequestHandler<
         id: user._id.toString(),
         email: user.email,
         name: user.name,
+        image: user.image ?? null,
         accessToken: null,
       },
     };
@@ -100,11 +106,17 @@ const deleteUser: RequestHandler = async (req, res, next) => {
       throw error;
     }
 
+    let deleteImageMessage = "";
+    if (user.image) {
+      deleteImageMessage = (await cloudinaryService.deleteImage(user.image))
+        .message;
+    }
+
     await UserModel.findByIdAndDelete(userId);
 
     const response: ApiResponse = {
       success: true,
-      message: "User deleted successfully",
+      message: `User deleted successfully. ${deleteImageMessage}`,
       errors: null,
       data: null,
     };
@@ -138,6 +150,7 @@ const getMe: RequestHandler = async (req, res, next) => {
         id: user._id.toString(),
         email: user.email,
         name: user.name,
+        image: user.image ?? null,
         accessToken: null,
       },
     };
