@@ -1,22 +1,29 @@
 # Create project
 ```bash
-bun init -y
+pnpm init -y
 
-bun add express
+pnpm add express cors
 
-bun add -d @types/express @types/node typescript
+pnpm add @types/express @types/cors @types/node typescript tsx -D
 ```
 
 # Integrate lint
 ```bash
-bun create @eslint/config@latest
+pnpm create @eslint/config@latest
 
-bun add jiti -d
+pnpm add jiti -D
+```
+
+# Integrate swagger
+```bash
+pnpm add swagger-jsdoc swagger-ui-express
+
+pnpm add @types/swagger-jsdoc @types/swagger-ui-express -D
 ```
 
 # Run project
 ```bash
-bun install
+pnpm install
 
-bun start
+pnpm start:dev
 ```

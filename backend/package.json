@@ -10,13 +10,11 @@
     "email": "hoangquoc2106@gmail.com"
   },
   "scripts": {
-    "start": "nodemon --exec tsx app.ts",
+    "start:dev": "nodemon --exec tsx app.ts",
     "compile": "tsc",
     "lint": "eslint . --ext .ts --fix"
   },
   "dependencies": {
-    "@types/body-parser": "^1.19.6",
-    "@types/swagger-jsdoc": "^6.0.4",
     "bcrypt": "^6.0.0",
     "body-parser": "^2.2.2",
     "cors": "^2.8.6",
@@ -29,23 +27,21 @@
     "mongoose": "^9.1.6",
     "nodemon": "^3.1.11",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.1",
-    "ts-node": "^10.9.2",
-    "tsx": "^4.21.0"
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/bcrypt": "^6.0.0",
+    "@types/body-parser": "^1.19.6",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^25.2.2",
+    "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
+    "tsx": "^4.21.0",
     "eslint": "^10.0.0",
     "globals": "^17.3.0",
-    "jiti": "^2.6.1",
-    "typescript-eslint": "^8.55.0"
-  },
-  "peerDependencies": {
+    "typescript-eslint": "^8.55.0",
     "typescript": "^5.9.3"
   }
 }
