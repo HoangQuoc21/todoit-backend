@@ -1,6 +1,6 @@
 import express from "express";
 import { body } from "express-validator";
-import { userModel } from "../user/user.model";
+import { UserModel } from "../user/user.model";
 import { authController } from "./auth.controller";
 import { FORM_FIELDS, PASSWORD_MIN_LENGTH } from "../../utils";
 import { middlewares } from "../../middlewares";
@@ -48,7 +48,7 @@ authRouter.post(
       .isEmail()
       .withMessage("Email must be valid")
       .custom(async (value) => {
-        const existingUser = await userModel.findOne({ email: value });
+        const existingUser = await UserModel.findOne({ email: value });
         if (existingUser) {
           return Promise.reject("Email already in use");
         }

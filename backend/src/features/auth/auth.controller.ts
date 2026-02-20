@@ -2,7 +2,7 @@ import type { RequestHandler } from "express";
 import { status } from "http-status";
 import { validationResult } from "express-validator";
 import { compare } from "bcrypt";
-import { userModel } from "../user/user.model";
+import { UserModel } from "../user/user.model";
 import { HttpError, type ApiResponse, type User } from "../../types";
 import { errorHelper, passwordHelper, tokenHelper } from "../../utils";
 
@@ -26,7 +26,7 @@ const signUp: RequestHandler<
   try {
     const hashedPassword = await passwordHelper.hashPassword(password);
 
-    const newUser = new userModel({
+    const newUser = new UserModel({
       email,
       password: hashedPassword,
       name,
@@ -75,7 +75,7 @@ const signIn: RequestHandler<
   const { email, password } = req.body;
 
   try {
-    const user = await userModel.findOne({ email });
+    const user = await UserModel.findOne({ email });
     if (!user) {
       const error = new HttpError(
         status.NOT_FOUND,
@@ -132,7 +132,7 @@ const signOut: RequestHandler = async (req, res, next) => {
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
-    await userModel.findByIdAndUpdate(userId, { accessToken: null });
+    await UserModel.findByIdAndUpdate(userId, { accessToken: null });
 
     const response: ApiResponse = {
       success: true,

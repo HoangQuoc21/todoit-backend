@@ -1,7 +1,7 @@
 import { model, Schema } from "mongoose";
 import { SCHEMA_NAME } from "../../utils";
 
-const todoSchema = new Schema({
+const TodoSchema = new Schema({
   title: {
     type: String,
     required: true,
@@ -30,4 +30,4 @@ const todoSchema = new Schema({
   },
 });
 
-export const todoModel = model(SCHEMA_NAME.TODO, todoSchema);
+export const TodoModel = model(SCHEMA_NAME.TODO, TodoSchema);

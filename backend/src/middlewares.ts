@@ -1,7 +1,7 @@
 import type { RequestHandler, ErrorRequestHandler } from "express";
 import { status } from "http-status";
 import { HttpError, type ApiResponse } from "./types";
-import { userModel } from "./features/user/user.model";
+import { UserModel } from "./features/user/user.model";
 import { tokenHelper } from "./utils/helpers";
 
 const rootHandler: RequestHandler = (req, res, next) => {
@@ -47,7 +47,7 @@ const isAuthenticatedHandler: RequestHandler = async (req, res, next) => {
   try {
     const accessToken = tokenHelper.getTokenFromRequestHeader(req);
 
-    const user = await userModel.findOne({
+    const user = await UserModel.findOne({
       accessToken: accessToken,
     });
 

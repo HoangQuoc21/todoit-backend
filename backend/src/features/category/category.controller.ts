@@ -3,9 +3,9 @@ import { HttpError, type ApiResponse, type Category } from "../../types";
 import { status } from "http-status";
 import { errorHelper, tokenHelper } from "../../utils";
 import { validationResult } from "express-validator";
-import { categoryModel } from "./category.model";
+import { CategoryModel } from "./category.model";
 import { ObjectId } from "mongodb";
-import { todoModel } from "../todo/todo.model";
+import { TodoModel } from "../todo/todo.model";
 
 const getCategories: RequestHandler = async (req, res, next) => {
   const errors = validationResult(req);
@@ -21,7 +21,7 @@ const getCategories: RequestHandler = async (req, res, next) => {
   const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
 
   try {
-    const categories = await categoryModel
+    const categories = await CategoryModel
       .find({
         $or: [{ isPublic: true }, { creatorId: new ObjectId(userId) }],
       })
@@ -60,7 +60,7 @@ const getCategory: RequestHandler<{ id: string }> = async (req, res, next) => {
   const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
 
   try {
-    const category = await categoryModel.findById(id);
+    const category = await CategoryModel.findById(id);
 
     if (!category) {
       const error = new HttpError(status.NOT_FOUND, "Category not found", null);
@@ -105,7 +105,7 @@ const createCategory: RequestHandler<
 
   try {
     const findingName = name.trim().toLowerCase();
-    const existedCategory = await categoryModel.findOne({
+    const existedCategory = await CategoryModel.findOne({
       name: { $regex: new RegExp(`^${findingName}$`, "i") },
       creatorId: new ObjectId(creatorId),
     });
@@ -113,7 +113,7 @@ const createCategory: RequestHandler<
       throw new HttpError(status.BAD_REQUEST, "Category already exists", null);
     }
 
-    const newCategory = new categoryModel({
+    const newCategory = new CategoryModel({
       name,
       isPublic,
       creatorId: new ObjectId(creatorId),
@@ -158,7 +158,7 @@ const editCategory: RequestHandler<
   const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
 
   try {
-    const category = await categoryModel.findById(id);
+    const category = await CategoryModel.findById(id);
 
     if (!category) {
       const error = new HttpError(status.NOT_FOUND, "Category not found", null);
@@ -215,7 +215,7 @@ const deleteCategory: RequestHandler<{ id: string }> = async (
   const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
 
   try {
-    const deletingCategory = await categoryModel.findById(id);
+    const deletingCategory = await CategoryModel.findById(id);
 
     if (!deletingCategory) {
       const error = new HttpError(status.NOT_FOUND, "Category not found", null);
@@ -231,7 +231,7 @@ const deleteCategory: RequestHandler<{ id: string }> = async (
       throw error;
     }
 
-    const todosUsingCategory = await todoModel
+    const todosUsingCategory = await TodoModel
       .find({ categoryId: new ObjectId(id) })
       .limit(1);
     if (todosUsingCategory.length > 0) {
@@ -243,7 +243,7 @@ const deleteCategory: RequestHandler<{ id: string }> = async (
       throw error;
     }
 
-    await categoryModel.findByIdAndDelete(id);
+    await CategoryModel.findByIdAndDelete(id);
 
     const response: ApiResponse = {
       success: true,

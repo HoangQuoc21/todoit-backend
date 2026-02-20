@@ -1,7 +1,7 @@
 import { model, Schema } from "mongoose";
 import { SCHEMA_NAME } from "../../utils";
 
-const categorySchema = new Schema({
+const CategorySchema = new Schema({
   name: {
     type: String,
     required: true,
@@ -17,4 +17,4 @@ const categorySchema = new Schema({
   },
 });
 
-export const categoryModel = model(SCHEMA_NAME.CATEGORY, categorySchema);
+export const CategoryModel = model(SCHEMA_NAME.CATEGORY, CategorySchema);

@@ -4,8 +4,8 @@ import { validationResult } from "express-validator";
 import { HttpError, type ApiResponse, type Todo } from "../../types";
 import status from "http-status";
 import { errorHelper, FORM_FIELDS, tokenHelper } from "../../utils";
-import { todoModel } from "./todo.model";
-import { categoryModel } from "../category/category.model";
+import { TodoModel } from "./todo.model";
+import { CategoryModel } from "../category/category.model";
 
 const createTodo: RequestHandler<
   {},
@@ -31,7 +31,7 @@ const createTodo: RequestHandler<
   const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
 
   try {
-    const newTodo = await todoModel.create({
+    const newTodo = await TodoModel.create({
       title,
       content: content,
       dueDate: dueDate ? parseInt(dueDate) : null,
@@ -85,7 +85,7 @@ const getTodos: RequestHandler = async (req, res, next) => {
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
-    const todos = await todoModel
+    const todos = await TodoModel
       .find({ creatorId: new ObjectId(userId) })
       .populate(FORM_FIELDS.CATEGORY_ID);
 
@@ -134,7 +134,7 @@ const getTodo: RequestHandler<{ id: string }> = async (req, res, next) => {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
     const todoId = req.params.id;
 
-    const todo = await todoModel
+    const todo = await TodoModel
       .findOne({ _id: new ObjectId(todoId), creatorId: new ObjectId(userId) })
       .populate(FORM_FIELDS.CATEGORY_ID);
 
@@ -191,7 +191,7 @@ const deleteTodo: RequestHandler<{ id: string }> = async (req, res, next) => {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
     const todoId = req.params.id;
 
-    const deletedTodo = await todoModel.findOneAndDelete({
+    const deletedTodo = await TodoModel.findOneAndDelete({
       _id: new ObjectId(todoId),
       creatorId: new ObjectId(userId),
     });
@@ -244,7 +244,7 @@ const editTodo: RequestHandler<
     const { title, content, dueDate, categoryId } = req.body;
 
     if (categoryId) {
-      const categoryExists = await categoryModel.findById(categoryId);
+      const categoryExists = await CategoryModel.findById(categoryId);
       if (!categoryExists) {
         const returnError = new HttpError(
           status.BAD_REQUEST,
@@ -255,7 +255,7 @@ const editTodo: RequestHandler<
       }
     }
 
-    const updatedTodo = await todoModel.findById(todoId);
+    const updatedTodo = await TodoModel.findById(todoId);
 
     if (!updatedTodo) {
       const returnError = new HttpError(
@@ -337,7 +337,7 @@ const toggleCompleted: RequestHandler<
     const todoId = req.params.id;
     const { isCompleted } = req.body;
 
-    const todo = await todoModel.findOne({
+    const todo = await TodoModel.findOne({
       _id: new ObjectId(todoId),
       creatorId: new ObjectId(userId),
     });

@@ -1,7 +1,7 @@
 import type { RequestHandler } from "express";
 import { status } from "http-status";
 import { validationResult } from "express-validator";
-import { userModel } from "./user.model";
+import { UserModel } from "./user.model";
 import { type ApiResponse, HttpError, type User } from "../../types";
 import { errorHelper, tokenHelper, passwordHelper } from "../../utils";
 
@@ -19,7 +19,7 @@ const getUser: RequestHandler<{ id: string }> = async (req, res, next) => {
   const { id } = req.params;
 
   try {
-    const user = await userModel.findById(id);
+    const user = await UserModel.findById(id);
     if (!user) {
       const error = new HttpError(
         status.NOT_FOUND,
@@ -66,7 +66,7 @@ const editUser: RequestHandler<
   const id = tokenHelper.parseTokenFromRequestHeader(req).userId;
 
   try {
-    const user = await userModel.findById(id);
+    const user = await UserModel.findById(id);
     if (!user) {
       const error = new HttpError(
         status.NOT_FOUND,
@@ -115,7 +115,7 @@ const deleteUser: RequestHandler = async (req, res, next) => {
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
-    const user = await userModel.findById(userId);
+    const user = await UserModel.findById(userId);
     if (!user) {
       const error = new HttpError(
         status.NOT_FOUND,
@@ -125,7 +125,7 @@ const deleteUser: RequestHandler = async (req, res, next) => {
       throw error;
     }
 
-    await userModel.findByIdAndDelete(userId);
+    await UserModel.findByIdAndDelete(userId);
 
     const response: ApiResponse = {
       success: true,
@@ -153,7 +153,7 @@ const getMe: RequestHandler = async (req, res, next) => {
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
-    const user = await userModel.findById(userId);
+    const user = await UserModel.findById(userId);
     if (!user) {
       const error = new HttpError(
         status.NOT_FOUND,

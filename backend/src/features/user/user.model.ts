@@ -1,7 +1,7 @@
 import { model, Schema } from "mongoose";
 import { SCHEMA_NAME } from "../../utils/constants/schema-name";
 
-const userSchema = new Schema({
+const UserSchema = new Schema({
   email: {
     type: String,
     required: true,
@@ -24,4 +24,4 @@ const userSchema = new Schema({
   },
 });
 
-export const userModel = model(SCHEMA_NAME.USER, userSchema);
+export const UserModel = model(SCHEMA_NAME.USER, UserSchema);
