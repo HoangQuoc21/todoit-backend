@@ -5,6 +5,7 @@ import { UserModel } from "./features/user/user.model";
 import { tokenHelper } from "./utils/helpers";
 import { param, query } from "express-validator";
 import { FORM_FIELDS } from "./utils";
+import { cloudinaryService } from "./services";
 
 const rootHandler: RequestHandler = (req, res, next) => {
   const response: ApiResponse = {
@@ -82,6 +83,46 @@ const paramIdValidator = param(FORM_FIELDS.ID)
   .isMongoId()
   .withMessage("Invalid MongoDB Category ID format");
 
+const imageUploadHandler: RequestHandler = (req, res, next) => {
+  cloudinaryService.parser.single(FORM_FIELDS.IMAGE)(req, res, (err) => {
+    if (err) {
+      return next(
+        new HttpError(
+          status.INTERNAL_SERVER_ERROR,
+          `Image upload failed: ${err.message}`,
+          null,
+        ),
+      );
+    }
+    next();
+  });
+};
+
+const uploadHandler: RequestHandler = (req, res, next) => {
+  try {
+    if (!req.file) {
+      return res.status(status.BAD_REQUEST).json({
+        success: false,
+        message: "No file uploaded",
+        errors: null,
+        data: null,
+      });
+    }
+
+    const response: ApiResponse<string> = {
+      success: true,
+      message: "File uploaded successfully",
+      errors: null,
+      data: req.file.path,
+    };
+    console.log("\b --> app.ts:58 --> response:", response);
+
+    res.status(status.OK).json(response);
+  } catch (err) {
+    return next(err);
+  }
+};
+
 export const middlewares = {
   rootHandler,
   notFoundHandler,
@@ -89,4 +130,6 @@ export const middlewares = {
   isAuthenticatedHandler,
   paginationValidators,
   paramIdValidator,
+  imageUploadHandler,
+  uploadHandler,
 };

@@ -3,5 +3,6 @@
  * Do not modify this file directly.
  */
 
+export * from "./cloudinary";
 export * from "./push-notification";
 export * from "./swagger";

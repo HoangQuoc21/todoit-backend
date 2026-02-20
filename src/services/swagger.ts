@@ -50,4 +50,6 @@ const options: swaggerJSDoc.Options = {
   apis: ["./src/features/**/*route.ts"],
 };
 
-export const swaggerSpec = swaggerJSDoc(options);
+export const swaggerService = {
+  specification: swaggerJSDoc(options),
+};

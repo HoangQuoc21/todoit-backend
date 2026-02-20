@@ -1,4 +1,5 @@
 onlyBuiltDependencies:
-  - "@scarf/scarf"
+  - '@scarf/scarf'
   - bcrypt
+  - core-js
   - esbuild
