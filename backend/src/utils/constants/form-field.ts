@@ -15,6 +15,8 @@ export const FORM_FIELDS = {
   USER_ID: "userId",
   IS_READ: "isRead",
   SENT_AT: "sentAt",
+  PAGE: "page",
+  SIZE: "size",
 };
 
 export const PASSWORD_MIN_LENGTH = 6;

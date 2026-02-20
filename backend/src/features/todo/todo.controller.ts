@@ -1,9 +1,14 @@
 import { ObjectId } from "mongodb";
 import type { RequestHandler } from "express";
 import { validationResult } from "express-validator";
-import { HttpError, type ApiResponse, type Todo } from "../../types";
+import {
+  HttpError,
+  type ApiResponse,
+  type ListResponse,
+  type Todo,
+} from "../../types";
 import { status } from "http-status";
-import { errorHelper, FORM_FIELDS, tokenHelper } from "../../utils";
+import { errorHelper, FORM_FIELDS, PAGINATION, tokenHelper } from "../../utils";
 import { TodoModel } from "./todo.model";
 import { CategoryModel } from "../category/category.model";
 
@@ -72,7 +77,13 @@ const createTodo: RequestHandler<
   }
 };
 
-const getTodos: RequestHandler = async (req, res, next) => {
+const getTodos: RequestHandler = async (
+  req: {
+    query: { page?: number; size?: number };
+  },
+  res,
+  next,
+) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const returnError = new HttpError(
@@ -84,33 +95,48 @@ const getTodos: RequestHandler = async (req, res, next) => {
   }
 
   try {
-    const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
-    const todos = await TodoModel.find({
+    const userId = tokenHelper.parseTokenFromRequestHeader(req as any).userId;
+    const page = req.query.page ?? PAGINATION.DEFAULT_PAGE;
+    const size = req.query.size ?? PAGINATION.DEFAULT_SIZE;
+
+    const totalItems = await TodoModel.countDocuments({
+      creatorId: new ObjectId(userId),
+    });
+    const totalPages = Math.ceil(totalItems / size);
+    const items = await TodoModel.find({
       creatorId: new ObjectId(userId),
     }).populate(FORM_FIELDS.CATEGORY_ID);
 
-    const response: ApiResponse<Todo[]> = {
+    const response: ApiResponse<ListResponse<Todo>> = {
       success: true,
       message: "Todos retrieved successfully",
       errors: null,
-      data: todos.map((todo) => {
-        const populatedCategory = todo.categoryId as any;
-        return {
-          id: todo._id.toString(),
-          title: todo.title,
-          content: todo.content || null,
-          dueDate: todo.dueDate || null,
-          isCompleted: todo.isCompleted,
-          category: populatedCategory
-            ? {
-                id: populatedCategory._id.toString(),
-                name: populatedCategory.name,
-                isPublic: populatedCategory.isPublic,
-                isOwner: populatedCategory.creatorId.toString() === userId,
-              }
-            : null,
-        };
-      }),
+      data: {
+        meta: {
+          page,
+          size,
+          totalItems,
+          totalPages,
+        },
+        items: items.map((todo) => {
+          const populatedCategory = todo.categoryId as any;
+          return {
+            id: todo._id.toString(),
+            title: todo.title,
+            content: todo.content || null,
+            dueDate: todo.dueDate || null,
+            isCompleted: todo.isCompleted,
+            category: populatedCategory
+              ? {
+                  id: populatedCategory._id.toString(),
+                  name: populatedCategory.name,
+                  isPublic: populatedCategory.isPublic,
+                  isOwner: populatedCategory.creatorId.toString() === userId,
+                }
+              : null,
+          };
+        }),
+      },
     };
 
     res.status(status.OK).json(response);

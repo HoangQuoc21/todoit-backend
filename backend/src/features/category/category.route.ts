@@ -1,7 +1,7 @@
 import express from "express";
 import { categoryController } from "./category.controller";
 import { FORM_FIELDS } from "../../utils/constants/form-field";
-import { body, param } from "express-validator";
+import { body, param, query } from "express-validator";
 import { middlewares } from "../../middlewares";
 
 const categoryRouter = express.Router();
@@ -35,7 +35,17 @@ const categoryRouter = express.Router();
  */
 categoryRouter.get(
   "/all",
-  middlewares.isAuthenticatedHandler,
+  [
+    middlewares.isAuthenticatedHandler,
+    query(FORM_FIELDS.PAGE)
+      .optional()
+      .isInt({ min: 0 })
+      .withMessage(`${FORM_FIELDS.PAGE} must be a non-negative integer`),
+    query(FORM_FIELDS.SIZE)
+      .optional()
+      .isInt({ min: 1 })
+      .withMessage(`${FORM_FIELDS.SIZE} must be a positive integer`),
+  ],
   categoryController.getCategories,
 );
 

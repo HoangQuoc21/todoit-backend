@@ -1,13 +1,24 @@
 import type { RequestHandler } from "express";
-import { HttpError, type ApiResponse, type Category } from "../../types";
+import {
+  HttpError,
+  type ApiResponse,
+  type Category,
+  type ListResponse,
+} from "../../types";
 import { status } from "http-status";
-import { errorHelper, tokenHelper } from "../../utils";
+import { errorHelper, PAGINATION, tokenHelper } from "../../utils";
 import { validationResult } from "express-validator";
 import { CategoryModel } from "./category.model";
 import { ObjectId } from "mongodb";
 import { TodoModel } from "../todo/todo.model";
 
-const getCategories: RequestHandler = async (req, res, next) => {
+const getCategories: RequestHandler = async (
+  req: {
+    query: { page?: number; size?: number };
+  },
+  res,
+  next,
+) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const returnError = new HttpError(
@@ -18,23 +29,40 @@ const getCategories: RequestHandler = async (req, res, next) => {
     return next(errorHelper.handleServerError(returnError));
   }
 
-  const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
-
   try {
-    const categories = await CategoryModel.find({
-      $or: [{ isPublic: true }, { creatorId: new ObjectId(userId) }],
-    }).sort({ name: 1 });
+    const userId = tokenHelper.parseTokenFromRequestHeader(req as any).userId;
+    const page = req.query.page ?? PAGINATION.DEFAULT_PAGE;
+    const size = req.query.size ?? PAGINATION.DEFAULT_SIZE;
 
-    const response: ApiResponse<Category[]> = {
+    const totalItems = await CategoryModel.countDocuments({
+      $or: [{ isPublic: true }, { creatorId: new ObjectId(userId) }],
+    });
+    const totalPages = Math.ceil(totalItems / size);
+    const items = await CategoryModel.find({
+      $or: [{ isPublic: true }, { creatorId: new ObjectId(userId) }],
+    })
+      .sort({ name: 1 })
+      .skip(page * size)
+      .limit(size);
+
+    const response: ApiResponse<ListResponse<Category>> = {
       success: true,
       message: "Get categories successfully",
       errors: null,
-      data: categories.map((category) => ({
-        id: category._id.toString(),
-        name: category.name,
-        isPublic: category.isPublic,
-        isOwner: category.creatorId.toString() === userId,
-      })),
+      data: {
+        meta: {
+          page,
+          size,
+          totalItems,
+          totalPages,
+        },
+        items: items.map((category) => ({
+          id: category._id.toString(),
+          name: category.name,
+          isPublic: category.isPublic,
+          isOwner: category.creatorId.toString() === userId,
+        })),
+      },
     };
 
     res.status(status.OK).json(response);

@@ -1,9 +1,14 @@
 import { ObjectId } from "mongodb";
 import type { RequestHandler } from "express";
 import { validationResult } from "express-validator";
-import { HttpError, type ApiResponse, type Notification } from "../../types";
+import {
+  HttpError,
+  type ApiResponse,
+  type ListResponse,
+  type Notification,
+} from "../../types";
 import { status } from "http-status";
-import { errorHelper, tokenHelper } from "../../utils";
+import { errorHelper, PAGINATION, tokenHelper } from "../../utils";
 import { NotificationModel } from "./notification.model";
 
 const createNotification: RequestHandler<
@@ -50,7 +55,13 @@ const createNotification: RequestHandler<
   }
 };
 
-const getNotifications: RequestHandler = async (req, res, next) => {
+const getNotifications: RequestHandler = async (
+  req: {
+    query: { page?: number; size?: number };
+  },
+  res,
+  next,
+) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const returnError = new HttpError(
@@ -62,23 +73,41 @@ const getNotifications: RequestHandler = async (req, res, next) => {
   }
 
   try {
-    const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
+    const userId = tokenHelper.parseTokenFromRequestHeader(req as any).userId;
+    const page = req.query.page ?? PAGINATION.DEFAULT_PAGE;
+    const size = req.query.size ?? PAGINATION.DEFAULT_SIZE;
 
-    const notifications = await NotificationModel.find({
+    const totalItems = await NotificationModel.countDocuments({
       userId: new ObjectId(userId),
-    }).sort({ sentAt: -1 });
+    });
+    const totalPages = Math.ceil(totalItems / size);
 
-    const response: ApiResponse<Notification[]> = {
+    const items = await NotificationModel.find({
+      userId: new ObjectId(userId),
+    })
+      .sort({ sentAt: -1 })
+      .skip(page * size)
+      .limit(size);
+
+    const response: ApiResponse<ListResponse<Notification>> = {
       success: true,
       message: "Notifications retrieved successfully",
       errors: null,
-      data: notifications.map((notification) => ({
-        id: notification._id.toString(),
-        title: notification.title,
-        content: notification.content ?? null,
-        isRead: notification.isRead,
-        sentAt: notification.sentAt,
-      })),
+      data: {
+        meta: {
+          page,
+          size,
+          totalItems,
+          totalPages,
+        },
+        items: items.map((notification) => ({
+          id: notification._id.toString(),
+          title: notification.title,
+          content: notification.content ?? null,
+          isRead: notification.isRead,
+          sentAt: notification.sentAt,
+        })),
+      },
     };
 
     return res.status(status.OK).json(response);

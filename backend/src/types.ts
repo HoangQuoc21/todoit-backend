@@ -51,6 +51,16 @@ type Notification = {
   sentAt: number;
 };
 
+type ListResponse<T> = {
+  meta: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+  };
+  items: T[];
+};
+
 export {
   HttpError,
   type ApiResponse,
@@ -58,4 +68,5 @@ export {
   type Category,
   type Todo,
   type Notification,
+  type ListResponse,
 };
