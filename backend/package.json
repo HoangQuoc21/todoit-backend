@@ -10,7 +10,7 @@
     "email": "hoangquoc2106@gmail.com"
   },
   "scripts": {
-    "start:dev": "nodemon --exec tsx app.ts",
+    "start:dev": "tsx watch app.ts",
     "compile": "tsc",
     "format": "prettier --write .",
     "lint": "eslint . --ext .ts --fix"
@@ -26,7 +26,6 @@
     "http-status": "^2.1.0",
     "mongodb": "^7.1.0",
     "mongoose": "^9.1.6",
-    "nodemon": "^3.1.11",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
   },
