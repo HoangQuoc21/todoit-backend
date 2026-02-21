@@ -10,7 +10,7 @@ import { status } from "http-status";
 import { errorHelper, tokenHelper } from "@/helpers";
 import { PAGINATION } from "@/constants";
 import { NotificationModel } from "./notification.model";
-import { UserModel } from "../user/user.model";
+import { UserModel } from "../user";
 import { pushNotificationService } from "@/services";
 
 const createNotification: RequestHandler<

@@ -1,7 +1,7 @@
 import type { RequestHandler } from "express";
 import { status } from "http-status";
 import { compare } from "bcrypt";
-import { UserModel } from "../user/user.model";
+import { UserModel } from "../user";
 import { HttpError, type ApiResponse, type User } from "@/types";
 import { errorHelper, passwordHelper, tokenHelper } from "@/helpers";
 

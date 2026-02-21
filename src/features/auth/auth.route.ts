@@ -1,6 +1,6 @@
 import express from "express";
 import { body } from "express-validator";
-import { UserModel } from "../user/user.model";
+import { UserModel } from "../user";
 import { authController } from "./auth.controller";
 import { FORM_FIELDS, PASSWORD_MIN_LENGTH } from "@/constants";
 import { middlewares } from "@/middlewares";

@@ -1,7 +1,7 @@
 import type { RequestHandler, ErrorRequestHandler } from "express";
 import { status } from "http-status";
 import { HttpError, type ApiResponse } from "./types";
-import { UserModel } from "./features/user/user.model";
+import { UserModel } from "./features/user/user.model"; // Can't shorten the import paths of these files because of circular dependency issues
 import { errorHelper, tokenHelper } from "./helpers";
 import { FORM_FIELDS } from "./constants";
 import { cloudinaryService } from "./services";

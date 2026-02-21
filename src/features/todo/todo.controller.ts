@@ -10,7 +10,7 @@ import { status } from "http-status";
 import { errorHelper, tokenHelper } from "@/helpers";
 import { FORM_FIELDS, PAGINATION } from "@/constants";
 import { TodoModel } from "./todo.model";
-import { CategoryModel } from "../category/category.model";
+import { CategoryModel } from "../category";
 import { cloudinaryService } from "@/services/cloudinary";
 
 const createTodo: RequestHandler<

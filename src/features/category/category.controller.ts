@@ -10,7 +10,7 @@ import { errorHelper, tokenHelper } from "@/helpers";
 import { PAGINATION } from "@/constants";
 import { CategoryModel } from "./category.model";
 import { ObjectId } from "mongodb";
-import { TodoModel } from "../todo/todo.model";
+import { TodoModel } from "../todo";
 
 const getCategories: RequestHandler = async (
   req: {
