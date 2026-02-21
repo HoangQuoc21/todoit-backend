@@ -3,6 +3,7 @@ import { body } from "express-validator";
 import { userController } from "./user.controller";
 import { FORM_FIELDS, PASSWORD_MIN_LENGTH } from "@/utils";
 import { middlewares } from "@/middlewares";
+import { validators } from "@/validators";
 
 const userRouter = express.Router();
 
@@ -76,7 +77,7 @@ userRouter.get("/me", middlewares.isAuthenticatedHandler, userController.getMe);
  */
 userRouter.get(
   "/:id",
-  [middlewares.isAuthenticatedHandler, middlewares.paramIdValidator],
+  [middlewares.isAuthenticatedHandler, validators.paramIdValidator],
   userController.getUser,
 );
 
@@ -118,7 +119,6 @@ userRouter.put(
   "/",
   [
     middlewares.isAuthenticatedHandler,
-    middlewares.imageUploadHandler,
     body(FORM_FIELDS.EMAIL)
       .isEmail()
       .withMessage("Email must be valid")
@@ -135,6 +135,7 @@ userRouter.put(
       .not()
       .isEmpty()
       .withMessage("Name is required"),
+    validators.bodyImageUrlValidator,
   ],
   userController.editUser,
 );

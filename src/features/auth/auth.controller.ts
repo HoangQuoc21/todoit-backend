@@ -29,7 +29,7 @@ const signUp: RequestHandler<
     newUser.accessToken = accessToken;
 
     if (req.file) {
-      newUser.image = req.file.path;
+      newUser.imageUrl = req.file.path;
     }
 
     await newUser.save();
@@ -42,7 +42,7 @@ const signUp: RequestHandler<
         id: newUser._id.toString(),
         email: newUser.email,
         name: newUser.name,
-        image: newUser.image ?? null,
+        imageUrl: newUser.imageUrl ?? null,
         accessToken: newUser.accessToken,
       },
     };
@@ -97,7 +97,7 @@ const signIn: RequestHandler<
         id: userId,
         email: user.email,
         name: user.name,
-        image: user.image ?? null,
+        imageUrl: user.imageUrl ?? null,
         accessToken: user.accessToken,
       },
     };

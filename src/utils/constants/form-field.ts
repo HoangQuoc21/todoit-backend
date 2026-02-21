@@ -19,6 +19,7 @@ export const FORM_FIELDS = {
   SIZE: "size",
   PUSH_TOKEN: "pushToken",
   IMAGE: "image",
+  IMAGE_URL: "imageUrl",
 };
 
 export const PASSWORD_MIN_LENGTH = 6;

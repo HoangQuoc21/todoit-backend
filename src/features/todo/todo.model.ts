@@ -10,7 +10,7 @@ const TodoSchema = new Schema({
     type: String,
     required: false,
   },
-  image: {
+  imageUrl: {
     type: String,
     required: false,
   },

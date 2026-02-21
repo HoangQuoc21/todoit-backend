@@ -18,27 +18,24 @@ const createTodo: RequestHandler<
   {
     title: string;
     content?: string;
-    dueDate?: string;
+    imageUrl?: string;
+    dueDate?: number;
     categoryId?: string;
   }
 > = async (req, res, next) => {
   errorHelper.handleValidationError(req, next);
 
   try {
-    const { title, content, dueDate, categoryId } = req.body;
+    const { title, content, imageUrl, dueDate, categoryId } = req.body;
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
-    let image = null;
-    if (req.file) {
-      image = req.file.path;
-    }
 
     const newTodo = await TodoModel.create({
       title,
-      content: content,
-      image,
-      dueDate: dueDate ? parseInt(dueDate) : null,
-      creatorId: new ObjectId(userId),
+      content: content ?? null,
+      imageUrl,
+      dueDate: dueDate ?? null,
       categoryId: categoryId ? new ObjectId(categoryId) : null,
+      creatorId: new ObjectId(userId),
     });
 
     if (categoryId) {
@@ -55,7 +52,7 @@ const createTodo: RequestHandler<
         id: newTodo._id.toString(),
         title: newTodo.title,
         content: newTodo.content || null,
-        image: newTodo.image || null,
+        imageUrl: newTodo.imageUrl || null,
         dueDate: newTodo.dueDate || null,
         isCompleted: newTodo.isCompleted,
         category: populatedCategory
@@ -114,7 +111,7 @@ const getTodos: RequestHandler = async (
             id: todo._id.toString(),
             title: todo.title,
             content: todo.content || null,
-            image: todo.image || null,
+            imageUrl: todo.imageUrl || null,
             dueDate: todo.dueDate || null,
             isCompleted: todo.isCompleted,
             category: populatedCategory
@@ -167,7 +164,7 @@ const getTodo: RequestHandler<{ id: string }> = async (req, res, next) => {
         id: todo._id.toString(),
         title: todo.title,
         content: todo.content || null,
-        image: todo.image || null,
+        imageUrl: todo.imageUrl || null,
         dueDate: todo.dueDate || null,
         isCompleted: todo.isCompleted,
         category: populatedCategory
@@ -209,9 +206,9 @@ const deleteTodo: RequestHandler<{ id: string }> = async (req, res, next) => {
     }
 
     let deleteImageMessage = "";
-    if (deletedTodo.image) {
+    if (deletedTodo.imageUrl) {
       deleteImageMessage = (
-        await cloudinaryService.deleteImage(deletedTodo.image)
+        await cloudinaryService.deleteImage(deletedTodo.imageUrl)
       ).message;
     }
     await TodoModel.deleteOne({ _id: new ObjectId(todoId) });
@@ -233,11 +230,11 @@ const editTodo: RequestHandler<
   { id: string },
   {},
   {
-    title?: string;
+    title: string;
     content?: string;
-    dueDate?: string;
+    imageUrl?: string;
+    dueDate?: number;
     categoryId?: string;
-    image?: string;
   }
 > = async (req, res, next) => {
   errorHelper.handleValidationError(req, next);
@@ -245,11 +242,7 @@ const editTodo: RequestHandler<
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
     const todoId = req.params.id;
-    const { title, content, dueDate, categoryId } = req.body;
-    let image = null;
-    if (req.file) {
-      image = req.file.path;
-    }
+    const { title, content, imageUrl, dueDate, categoryId } = req.body;
 
     if (categoryId) {
       const categoryExists = await CategoryModel.findById(categoryId);
@@ -283,13 +276,37 @@ const editTodo: RequestHandler<
       return next(errorHelper.handleServerError(returnError));
     }
 
-    if (title !== undefined) updatedTodo.title = title;
-    if (content !== undefined) updatedTodo.content = content;
-    if (dueDate !== undefined)
-      updatedTodo.dueDate = dueDate ? parseInt(dueDate) : null;
-    if (categoryId !== undefined)
+    updatedTodo.title = title;
+    if (content) updatedTodo.content = content ?? null;
+    if (imageUrl) {
+      if (imageUrl !== updatedTodo.imageUrl) {
+        const oldImageUrl = updatedTodo.imageUrl;
+        updatedTodo.imageUrl = imageUrl;
+        if (oldImageUrl) {
+          // delete in background
+          cloudinaryService
+            .deleteImage(oldImageUrl)
+            .then((result) => {
+              console.log(
+                "\b --> todo.controller.ts:288 --> editTodo --> result:",
+                result,
+              );
+            })
+            .catch((err) => {
+              console.error(
+                "\b --> todo.controller.ts:290 --> editTodo --> error:",
+                err,
+              );
+            });
+        }
+      }
+    } else {
+      updatedTodo.imageUrl = null;
+    }
+    if (dueDate) updatedTodo.dueDate = dueDate ?? null;
+    if (categoryId)
       updatedTodo.categoryId = categoryId ? new ObjectId(categoryId) : null;
-    if (image !== undefined) updatedTodo.image = image;
+
     await updatedTodo.save();
 
     if (updatedTodo.categoryId) {
@@ -306,7 +323,7 @@ const editTodo: RequestHandler<
         id: updatedTodo._id.toString(),
         title: updatedTodo.title,
         content: updatedTodo.content || null,
-        image: updatedTodo.image || null,
+        imageUrl: updatedTodo.imageUrl || null,
         dueDate: updatedTodo.dueDate || null,
         isCompleted: updatedTodo.isCompleted,
         category: populatedCategory
@@ -366,7 +383,7 @@ const toggleCompleted: RequestHandler<
         id: updatedTodo._id.toString(),
         title: updatedTodo.title,
         content: updatedTodo.content || null,
-        image: updatedTodo.image || null,
+        imageUrl: updatedTodo.imageUrl || null,
         dueDate: updatedTodo.dueDate || null,
         isCompleted: updatedTodo.isCompleted,
         category: populatedCategory

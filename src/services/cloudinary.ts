@@ -51,7 +51,7 @@ export const cloudinaryService = {
       if (result.result == "ok") {
         return {
           success: true,
-          message: `Cloudinary image deleted successfully: ${publicId}`,
+          message: `Cloudinary imageUrl deleted successfully: ${publicId}`,
         };
       } else {
         return {
@@ -65,5 +65,8 @@ export const cloudinaryService = {
         message: `Cloudinary deletion error: ${(err as Error).message}`,
       };
     }
+  },
+  isCloudinaryUrl: (url: string): boolean => {
+    return url.includes("res.cloudinary.com");
   },
 };

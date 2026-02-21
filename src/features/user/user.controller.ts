@@ -29,7 +29,7 @@ const getUser: RequestHandler<{ id: string }> = async (req, res, next) => {
         id: user._id.toString(),
         email: user.email,
         name: user.name,
-        image: user.image ?? null,
+        imageUrl: user.imageUrl ?? null,
         accessToken: null,
       },
     };
@@ -43,11 +43,11 @@ const getUser: RequestHandler<{ id: string }> = async (req, res, next) => {
 const editUser: RequestHandler<
   {},
   {},
-  { email: string; password?: string; name: string }
+  { email: string; password?: string; name: string; imageUrl?: string }
 > = async (req, res, next) => {
   errorHelper.handleValidationError(req, next);
 
-  const { email, password, name } = req.body;
+  const { email, password, name, imageUrl } = req.body;
   const id = tokenHelper.parseTokenFromRequestHeader(req).userId;
 
   try {
@@ -66,8 +66,29 @@ const editUser: RequestHandler<
     if (password && password !== user.password) {
       user.password = await passwordHelper.hashPassword(password);
     }
-    if (req.file) {
-      user.image = req.file.path;
+    if (imageUrl) {
+      if (imageUrl !== user.imageUrl) {
+        const oldImageUrl = user.imageUrl;
+        if (oldImageUrl) {
+          cloudinaryService
+            .deleteImage(oldImageUrl)
+            .then((result) => {
+              console.log(
+                "\b --> user.controller.ts:111 --> editUser --> result:",
+                result,
+              );
+            })
+            .catch((err) => {
+              console.error(
+                "\b --> user.controller.ts:113 --> editUser --> error:",
+                err,
+              );
+            });
+        }
+      }
+      user.imageUrl = imageUrl;
+    } else {
+      user.imageUrl = null;
     }
 
     await user.save();
@@ -80,7 +101,7 @@ const editUser: RequestHandler<
         id: user._id.toString(),
         email: user.email,
         name: user.name,
-        image: user.image ?? null,
+        imageUrl: user.imageUrl ?? null,
         accessToken: null,
       },
     };
@@ -106,17 +127,28 @@ const deleteUser: RequestHandler = async (req, res, next) => {
       throw error;
     }
 
-    let deleteImageMessage = "";
-    if (user.image) {
-      deleteImageMessage = (await cloudinaryService.deleteImage(user.image))
-        .message;
+    if (user.imageUrl) {
+      cloudinaryService
+        .deleteImage(user.imageUrl)
+        .then((result) => {
+          console.log(
+            "\b --> user.controller.ts:111 --> deleteUser --> result:",
+            result,
+          );
+        })
+        .catch((err) => {
+          console.error(
+            "\b --> user.controller.ts:113 --> deleteUser --> error:",
+            err,
+          );
+        });
     }
 
     await UserModel.findByIdAndDelete(userId);
 
     const response: ApiResponse = {
       success: true,
-      message: `User deleted successfully. ${deleteImageMessage}`,
+      message: "User deleted successfully",
       errors: null,
       data: null,
     };
@@ -150,7 +182,7 @@ const getMe: RequestHandler = async (req, res, next) => {
         id: user._id.toString(),
         email: user.email,
         name: user.name,
-        image: user.image ?? null,
+        imageUrl: user.imageUrl ?? null,
         accessToken: null,
       },
     };

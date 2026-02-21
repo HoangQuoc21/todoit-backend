@@ -3,6 +3,7 @@ import { notificationController } from "./notification.controller";
 import { body } from "express-validator";
 import { FORM_FIELDS } from "@/utils";
 import { middlewares } from "@/middlewares";
+import { validators } from "@/validators";
 
 const notificationRouter = express.Router();
 
@@ -136,7 +137,7 @@ notificationRouter.post(
  */
 notificationRouter.get(
   "/all",
-  [middlewares.isAuthenticatedHandler, ...middlewares.paginationValidators],
+  [middlewares.isAuthenticatedHandler, ...validators.paginationValidators],
   notificationController.getNotifications,
 );
 
@@ -190,7 +191,7 @@ notificationRouter.get(
  */
 notificationRouter.get(
   "/:id",
-  [middlewares.isAuthenticatedHandler, middlewares.paramIdValidator],
+  [middlewares.isAuthenticatedHandler, validators.paramIdValidator],
   notificationController.getNotification,
 );
 
@@ -243,7 +244,7 @@ notificationRouter.patch(
  */
 notificationRouter.patch(
   "/mark-read/:id",
-  [middlewares.isAuthenticatedHandler, middlewares.paramIdValidator],
+  [middlewares.isAuthenticatedHandler, validators.paramIdValidator],
   notificationController.markRead,
 );
 
@@ -296,7 +297,7 @@ notificationRouter.delete(
  */
 notificationRouter.delete(
   "/:id",
-  [middlewares.isAuthenticatedHandler, middlewares.paramIdValidator],
+  [middlewares.isAuthenticatedHandler, validators.paramIdValidator],
   notificationController.deleteNotification,
 );
 

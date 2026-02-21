@@ -3,6 +3,7 @@ import { categoryController } from "./category.controller";
 import { FORM_FIELDS } from "@/utils/constants/form-field";
 import { body } from "express-validator";
 import { middlewares } from "@/middlewares";
+import { validators } from "@/validators";
 
 const categoryRouter = express.Router();
 
@@ -35,7 +36,7 @@ const categoryRouter = express.Router();
  */
 categoryRouter.get(
   "/all",
-  [middlewares.isAuthenticatedHandler, ...middlewares.paginationValidators],
+  [middlewares.isAuthenticatedHandler, ...validators.paginationValidators],
   categoryController.getCategories,
 );
 
@@ -77,7 +78,7 @@ categoryRouter.get(
  */
 categoryRouter.get(
   "/:id",
-  [middlewares.isAuthenticatedHandler, middlewares.paramIdValidator],
+  [middlewares.isAuthenticatedHandler, validators.paramIdValidator],
   categoryController.getCategory,
 );
 
@@ -180,7 +181,7 @@ categoryRouter.put(
   "/:id",
   [
     middlewares.isAuthenticatedHandler,
-    middlewares.paramIdValidator,
+    validators.paramIdValidator,
     body(FORM_FIELDS.NAME)
       .exists()
       .trim()
@@ -225,7 +226,7 @@ categoryRouter.put(
  */
 categoryRouter.delete(
   "/:id",
-  [middlewares.isAuthenticatedHandler, middlewares.paramIdValidator],
+  [middlewares.isAuthenticatedHandler, validators.paramIdValidator],
   categoryController.deleteCategory,
 );
 

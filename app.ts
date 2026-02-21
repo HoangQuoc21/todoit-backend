@@ -41,8 +41,8 @@ app.use("/todo", todoRouter);
 app.use("/user", userRouter);
 app.post("/upload-image", [
   middlewares.isAuthenticatedHandler,
-  middlewares.imageUploadHandler,
-  middlewares.uploadHandler,
+  middlewares.cloudinaryUploadHandler,
+  middlewares.uploadImageHandler,
 ]);
 app.use(middlewares.notFoundHandler);
 app.use(middlewares.errorHandler);

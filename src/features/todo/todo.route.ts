@@ -1,6 +1,7 @@
 import express from "express";
 import { todoController } from "./todo.controller";
 import { middlewares } from "@/middlewares";
+import { validators } from "@/validators";
 import { body } from "express-validator";
 import { FORM_FIELDS } from "@/utils";
 
@@ -74,7 +75,6 @@ todoRouter.post(
   "/",
   [
     middlewares.isAuthenticatedHandler,
-    middlewares.imageUploadHandler,
     body(FORM_FIELDS.TITLE).notEmpty().withMessage("Title is required"),
     body(FORM_FIELDS.CONTENT).optional().isString(),
     body(FORM_FIELDS.DUE_DATE)
@@ -85,6 +85,7 @@ todoRouter.post(
       .optional()
       .isMongoId()
       .withMessage("Invalid category ID"),
+    validators.bodyImageUrlValidator,
   ],
   todoController.createTodo,
 );
@@ -132,7 +133,7 @@ todoRouter.post(
  */
 todoRouter.get(
   "/all",
-  [middlewares.isAuthenticatedHandler, ...middlewares.paginationValidators],
+  [middlewares.isAuthenticatedHandler, ...validators.paginationValidators],
   todoController.getTodos,
 );
 
@@ -188,7 +189,7 @@ todoRouter.get(
  */
 todoRouter.get(
   "/:id",
-  [middlewares.isAuthenticatedHandler, middlewares.paramIdValidator],
+  [middlewares.isAuthenticatedHandler, validators.paramIdValidator],
   todoController.getTodo,
 );
 
@@ -223,7 +224,7 @@ todoRouter.get(
  *               dueDate:
  *                 type: number
  *                 description: Due date as numeric timestamp (optional)
- *               image:
+ *               imageUrl:
  *                 type: file
  *                 description: Image file (optional)
  *               categoryId:
@@ -268,8 +269,7 @@ todoRouter.put(
   "/:id",
   [
     middlewares.isAuthenticatedHandler,
-    middlewares.paramIdValidator,
-    middlewares.imageUploadHandler,
+    validators.paramIdValidator,
     body(FORM_FIELDS.TITLE)
       .optional()
       .notEmpty()
@@ -284,6 +284,7 @@ todoRouter.put(
       .isMongoId()
       .withMessage("Invalid MongoDB Category ID format"),
   ],
+  validators.bodyImageUrlValidator,
   todoController.editTodo,
 );
 
@@ -314,7 +315,7 @@ todoRouter.put(
  */
 todoRouter.delete(
   "/:id",
-  [middlewares.isAuthenticatedHandler, middlewares.paramIdValidator],
+  [middlewares.isAuthenticatedHandler, validators.paramIdValidator],
   todoController.deleteTodo,
 );
 
@@ -384,7 +385,7 @@ todoRouter.patch(
   "/:id/toggle-completed",
   [
     middlewares.isAuthenticatedHandler,
-    middlewares.paramIdValidator,
+    validators.paramIdValidator,
     body(FORM_FIELDS.IS_COMPLETED)
       .exists()
       .withMessage(`${FORM_FIELDS.IS_COMPLETED} is required`)
