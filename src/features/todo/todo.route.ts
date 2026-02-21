@@ -3,7 +3,7 @@ import { todoController } from "./todo.controller";
 import { middlewares } from "@/middlewares";
 import { validators } from "@/validators";
 import { body } from "express-validator";
-import { FORM_FIELDS } from "@/utils";
+import { FORM_FIELDS } from "@/constants";
 
 const todoRouter = express.Router();
 

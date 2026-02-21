@@ -4,7 +4,7 @@ import multer from "multer";
 import { HttpError, type ThirdPartyResponse } from "@/types";
 import status from "http-status";
 import { extractPublicId } from "cloudinary-build-url";
-import { MEMORY_UNIT } from "@/utils";
+import { MEMORY_UNIT } from "@/constants";
 
 let _parser: multer.Multer | null = null;
 

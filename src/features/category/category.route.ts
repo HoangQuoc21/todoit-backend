@@ -1,6 +1,6 @@
 import express from "express";
 import { categoryController } from "./category.controller";
-import { FORM_FIELDS } from "@/utils/constants/form-field";
+import { FORM_FIELDS } from "@/constants/form-field";
 import { body } from "express-validator";
 import { middlewares } from "@/middlewares";
 import { validators } from "@/validators";

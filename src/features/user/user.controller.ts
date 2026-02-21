@@ -2,7 +2,7 @@ import type { RequestHandler } from "express";
 import { status } from "http-status";
 import { UserModel } from "./user.model";
 import { type ApiResponse, HttpError, type User } from "@/types";
-import { errorHelper, tokenHelper, passwordHelper } from "@/utils";
+import { errorHelper, tokenHelper, passwordHelper } from "@/helpers";
 import { cloudinaryService } from "@/services";
 
 const getUser: RequestHandler<{ id: string }> = async (req, res, next) => {

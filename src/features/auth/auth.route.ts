@@ -2,7 +2,7 @@ import express from "express";
 import { body } from "express-validator";
 import { UserModel } from "../user/user.model";
 import { authController } from "./auth.controller";
-import { FORM_FIELDS, PASSWORD_MIN_LENGTH } from "@/utils";
+import { FORM_FIELDS, PASSWORD_MIN_LENGTH } from "@/constants";
 import { middlewares } from "@/middlewares";
 
 const authRouter = express.Router();

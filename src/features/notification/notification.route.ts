@@ -1,7 +1,7 @@
 import express from "express";
 import { notificationController } from "./notification.controller";
 import { body } from "express-validator";
-import { FORM_FIELDS } from "@/utils";
+import { FORM_FIELDS } from "@/constants";
 import { middlewares } from "@/middlewares";
 import { validators } from "@/validators";
 

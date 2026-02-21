@@ -3,7 +3,7 @@ import { status } from "http-status";
 import { compare } from "bcrypt";
 import { UserModel } from "../user/user.model";
 import { HttpError, type ApiResponse, type User } from "@/types";
-import { errorHelper, passwordHelper, tokenHelper } from "@/utils";
+import { errorHelper, passwordHelper, tokenHelper } from "@/helpers";
 
 const signUp: RequestHandler<
   {},

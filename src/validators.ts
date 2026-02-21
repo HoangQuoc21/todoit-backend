@@ -1,5 +1,5 @@
 import { body, param, query } from "express-validator";
-import { FORM_FIELDS } from "./utils";
+import { FORM_FIELDS } from "./constants";
 import { cloudinaryService } from "./services";
 import { HttpError } from "./types";
 import status from "http-status";
