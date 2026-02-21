@@ -8,6 +8,9 @@ const handleServerError = (error: HttpError) => {
   if (!serverError.statusCode) {
     serverError.statusCode = status.INTERNAL_SERVER_ERROR;
   }
+  if (!error.data) {
+    serverError.data = null;
+  }
 
   return serverError;
 };
@@ -15,12 +18,12 @@ const handleServerError = (error: HttpError) => {
 const handleValidationError = (req: Request, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    const returnError = new HttpError(
+    const httpError = new HttpError(
       status.BAD_REQUEST,
       "Validation failed",
       errors.array(),
     );
-    return next(errorHelper.handleServerError(returnError));
+    return next(errorHelper.handleServerError(httpError));
   }
 };
 

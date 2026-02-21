@@ -2,7 +2,7 @@ import type { RequestHandler, ErrorRequestHandler } from "express";
 import { status } from "http-status";
 import { HttpError, type ApiResponse } from "./types";
 import { UserModel } from "./features/user/user.model";
-import { FORM_FIELDS, tokenHelper } from "./utils";
+import { errorHelper, FORM_FIELDS, tokenHelper } from "./utils";
 import { cloudinaryService } from "./services";
 
 const rootHandler: RequestHandler = (req, res, next) => {
@@ -56,8 +56,7 @@ const isAuthenticatedHandler: RequestHandler = async (req, res, next) => {
       throw error;
     }
   } catch (err) {
-    error.message = (err as Error).message || "Authentication failed";
-    return next(error);
+    next(errorHelper.handleServerError(err as HttpError));
   }
 
   next();
@@ -66,15 +65,10 @@ const isAuthenticatedHandler: RequestHandler = async (req, res, next) => {
 const cloudinaryUploadHandler: RequestHandler = (req, res, next) => {
   cloudinaryService.parser.single(FORM_FIELDS.IMAGE)(req, res, (err) => {
     if (err) {
-      return next(
-        new HttpError(
-          status.INTERNAL_SERVER_ERROR,
-          `Image upload to Cloudinary failed: ${(err as Error).message}`,
-          null,
-        ),
-      );
+      next(errorHelper.handleServerError(err as HttpError));
+    } else {
+      next();
     }
-    next();
   });
 };
 
@@ -98,13 +92,7 @@ const uploadImageHandler: RequestHandler = (req, res, next) => {
 
     res.status(status.OK).json(response);
   } catch (err) {
-    return next(
-      new HttpError(
-        status.INTERNAL_SERVER_ERROR,
-        `Failed to upload image: ${(err as Error).message}`,
-        null,
-      ),
-    );
+    next(errorHelper.handleServerError(err as HttpError));
   }
 };
 
