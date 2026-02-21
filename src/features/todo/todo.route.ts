@@ -74,6 +74,7 @@ todoRouter.post(
   "/",
   [
     middlewares.isAuthenticatedHandler,
+    middlewares.imageUploadHandler,
     body(FORM_FIELDS.TITLE).notEmpty().withMessage("Title is required"),
     body(FORM_FIELDS.CONTENT).optional().isString(),
     body(FORM_FIELDS.DUE_DATE)
@@ -222,6 +223,9 @@ todoRouter.get(
  *               dueDate:
  *                 type: number
  *                 description: Due date as numeric timestamp (optional)
+ *               image:
+ *                 type: file
+ *                 description: Image file (optional)
  *               categoryId:
  *                 type: string
  *                 description: MongoDB Category ID (optional)
@@ -265,6 +269,7 @@ todoRouter.put(
   [
     middlewares.isAuthenticatedHandler,
     middlewares.paramIdValidator,
+    middlewares.imageUploadHandler,
     body(FORM_FIELDS.TITLE)
       .optional()
       .notEmpty()

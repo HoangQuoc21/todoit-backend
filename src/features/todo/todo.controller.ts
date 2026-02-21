@@ -10,6 +10,7 @@ import { status } from "http-status";
 import { errorHelper, FORM_FIELDS, PAGINATION, tokenHelper } from "@/utils";
 import { TodoModel } from "./todo.model";
 import { CategoryModel } from "../category/category.model";
+import { cloudinaryService } from "@/services/cloudinary";
 
 const createTodo: RequestHandler<
   {},
@@ -23,13 +24,18 @@ const createTodo: RequestHandler<
 > = async (req, res, next) => {
   errorHelper.handleValidationError(req, next);
 
-  const { title, content, dueDate, categoryId } = req.body;
-  const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
-
   try {
+    const { title, content, dueDate, categoryId } = req.body;
+    const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
+    let image = null;
+    if (req.file) {
+      image = req.file.path;
+    }
+
     const newTodo = await TodoModel.create({
       title,
       content: content,
+      image,
       dueDate: dueDate ? parseInt(dueDate) : null,
       creatorId: new ObjectId(userId),
       categoryId: categoryId ? new ObjectId(categoryId) : null,
@@ -49,6 +55,7 @@ const createTodo: RequestHandler<
         id: newTodo._id.toString(),
         title: newTodo.title,
         content: newTodo.content || null,
+        image: newTodo.image || null,
         dueDate: newTodo.dueDate || null,
         isCompleted: newTodo.isCompleted,
         category: populatedCategory
@@ -107,6 +114,7 @@ const getTodos: RequestHandler = async (
             id: todo._id.toString(),
             title: todo.title,
             content: todo.content || null,
+            image: todo.image || null,
             dueDate: todo.dueDate || null,
             isCompleted: todo.isCompleted,
             category: populatedCategory
@@ -159,6 +167,7 @@ const getTodo: RequestHandler<{ id: string }> = async (req, res, next) => {
         id: todo._id.toString(),
         title: todo.title,
         content: todo.content || null,
+        image: todo.image || null,
         dueDate: todo.dueDate || null,
         isCompleted: todo.isCompleted,
         category: populatedCategory
@@ -185,7 +194,7 @@ const deleteTodo: RequestHandler<{ id: string }> = async (req, res, next) => {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
     const todoId = req.params.id;
 
-    const deletedTodo = await TodoModel.findOneAndDelete({
+    const deletedTodo = await TodoModel.findOne({
       _id: new ObjectId(todoId),
       creatorId: new ObjectId(userId),
     });
@@ -199,9 +208,17 @@ const deleteTodo: RequestHandler<{ id: string }> = async (req, res, next) => {
       return next(errorHelper.handleServerError(returnError));
     }
 
+    let deleteImageMessage = "";
+    if (deletedTodo.image) {
+      deleteImageMessage = (
+        await cloudinaryService.deleteImage(deletedTodo.image)
+      ).message;
+    }
+    await TodoModel.deleteOne({ _id: new ObjectId(todoId) });
+
     const response: ApiResponse<null> = {
       success: true,
-      message: "Todo deleted successfully",
+      message: "Todo deleted successfully" + deleteImageMessage,
       errors: null,
       data: null,
     };
@@ -220,6 +237,7 @@ const editTodo: RequestHandler<
     content?: string;
     dueDate?: string;
     categoryId?: string;
+    image?: string;
   }
 > = async (req, res, next) => {
   errorHelper.handleValidationError(req, next);
@@ -228,6 +246,10 @@ const editTodo: RequestHandler<
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
     const todoId = req.params.id;
     const { title, content, dueDate, categoryId } = req.body;
+    let image = null;
+    if (req.file) {
+      image = req.file.path;
+    }
 
     if (categoryId) {
       const categoryExists = await CategoryModel.findById(categoryId);
@@ -267,7 +289,7 @@ const editTodo: RequestHandler<
       updatedTodo.dueDate = dueDate ? parseInt(dueDate) : null;
     if (categoryId !== undefined)
       updatedTodo.categoryId = categoryId ? new ObjectId(categoryId) : null;
-
+    if (image !== undefined) updatedTodo.image = image;
     await updatedTodo.save();
 
     if (updatedTodo.categoryId) {
@@ -284,6 +306,7 @@ const editTodo: RequestHandler<
         id: updatedTodo._id.toString(),
         title: updatedTodo.title,
         content: updatedTodo.content || null,
+        image: updatedTodo.image || null,
         dueDate: updatedTodo.dueDate || null,
         isCompleted: updatedTodo.isCompleted,
         category: populatedCategory
@@ -343,6 +366,7 @@ const toggleCompleted: RequestHandler<
         id: updatedTodo._id.toString(),
         title: updatedTodo.title,
         content: updatedTodo.content || null,
+        image: updatedTodo.image || null,
         dueDate: updatedTodo.dueDate || null,
         isCompleted: updatedTodo.isCompleted,
         category: populatedCategory

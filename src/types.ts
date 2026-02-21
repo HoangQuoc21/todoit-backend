@@ -39,6 +39,7 @@ type Todo = {
   id: string;
   title: string;
   content: string | null;
+  image: string | null;
   dueDate: number | null;
   isCompleted: boolean;
   category: Category | null;

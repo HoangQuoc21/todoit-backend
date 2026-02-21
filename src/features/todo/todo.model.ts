@@ -10,6 +10,10 @@ const TodoSchema = new Schema({
     type: String,
     required: false,
   },
+  image: {
+    type: String,
+    required: false,
+  },
   dueDate: {
     type: Number,
     required: false,
