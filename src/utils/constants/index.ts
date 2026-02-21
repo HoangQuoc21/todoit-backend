@@ -4,5 +4,6 @@
  */
 
 export * from "./form-field";
+export * from "./memory-unit";
 export * from "./pagination";
 export * from "./schema-name";

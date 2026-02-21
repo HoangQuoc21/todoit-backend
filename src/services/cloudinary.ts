@@ -4,6 +4,7 @@ import multer from "multer";
 import { HttpError, type ThirdPartyResponse } from "@/types";
 import status from "http-status";
 import { extractPublicId } from "cloudinary-build-url";
+import { MEMORY_UNIT } from "@/utils";
 
 let _parser: multer.Multer | null = null;
 
@@ -25,7 +26,11 @@ export const cloudinaryService = {
       }),
     });
 
-    _parser = multer({ storage });
+    _parser = multer({
+      storage,
+      limits: { fileSize: 5 * MEMORY_UNIT.MB },
+    });
+
     console.log("--> Cloudinary configured successfully");
   },
   get parser() {
