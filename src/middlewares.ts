@@ -55,11 +55,11 @@ const isAuthenticatedHandler: RequestHandler = async (req, res, next) => {
     if (!user) {
       throw error;
     }
+
+    next();
   } catch (err) {
     next(errorHelper.handleServerError(err as HttpError));
   }
-
-  next();
 };
 
 const cloudinaryUploadHandler: RequestHandler = (req, res, next) => {
