@@ -34,7 +34,7 @@ pnpm install
 pnpm start:dev
 ```
 
-# Push image to Docker Hub
+# Publish image to Docker Hub
 ```bash
 docker login
 
@@ -44,6 +44,19 @@ docker images
 
 # If the image in DockerFile is named "<dockerhub_username>/<repository_name>:<tag>" Then doesn't need to run this command
 docker tag <local_image_name>:<local_tag> <dockerhub_username>/<repository_name>:<tag>
+
+docker push <dockerhub_username>/<repository_name>:<tag>
+```
+
+# Push code changes to Docker Hub
+```bash
+docker compose build
+
+# Build to test
+docker compose up -d
+
+# The images should be changed
+docker images 
 
 docker push <dockerhub_username>/<repository_name>:<tag>
 ```
