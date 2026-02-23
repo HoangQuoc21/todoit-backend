@@ -32,7 +32,8 @@
     "multer": "^2.0.2",
     "multer-storage-cloudinary": "^4.0.0",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.1"
+    "swagger-ui-express": "^5.0.1",
+    "tsx": "^4.21.0"
   },
   "devDependencies": {
     "@cld-apis/types": "^0.1.6",
@@ -51,7 +52,6 @@
     "globals": "^17.3.0",
     "jiti": "^2.6.1",
     "prettier": "^3.8.1",
-    "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.56.0"
   }

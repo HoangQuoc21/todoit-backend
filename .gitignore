@@ -1,4 +1,4 @@
-# dependencies (bun install)
+# dependencies
 node_modules
 
 # output
@@ -29,6 +29,9 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 # IntelliJ based IDEs
 .idea
+
+# VS Code settings
+.vscode
 
 # Finder (MacOS) folder config
 .DS_Store
