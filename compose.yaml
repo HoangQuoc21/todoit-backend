@@ -9,6 +9,7 @@
 # https://github.com/docker/awesome-compose
 services:
   server:
+    # container_name: todoit-backend
     image: hoangquoc21/todoit:backend-latest
     build:
       context: .
