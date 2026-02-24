@@ -113,20 +113,20 @@ notificationRouter.post(
     middlewares.isAuthenticatedHandler,
     body(FORM_FIELDS.USER_ID)
       .notEmpty()
-      .withMessage("User ID is required")
+      .withMessage(`${FORM_FIELDS.USER_ID} is required`)
       .bail()
       .isMongoId()
       .withMessage("Invalid MongoDB ObjectId format for User ID"),
     body(FORM_FIELDS.TITLE)
       .notEmpty()
-      .withMessage("Title is required")
+      .withMessage(`${FORM_FIELDS.TITLE} is required`)
       .bail()
       .isString()
-      .withMessage("Title must be a string"),
+      .withMessage(`${FORM_FIELDS.TITLE} must be a string`),
     body(FORM_FIELDS.CONTENT)
       .optional()
       .isString()
-      .withMessage("Content must be a string"),
+      .withMessage(`${FORM_FIELDS.CONTENT} must be a string`),
   ],
   notificationController.createNotification,
 );

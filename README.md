@@ -35,6 +35,7 @@ pnpm start:dev
 ```
 
 # Publish image to Docker Hub
+
 ```bash
 docker login
 
@@ -49,6 +50,7 @@ docker push <dockerhub_username>/<repository_name>:<tag>
 ```
 
 # Push code changes to Docker Hub
+
 ```bash
 docker compose build
 
@@ -56,7 +58,7 @@ docker compose build
 docker compose up -d
 
 # The images should be changed
-docker images 
+docker images
 
 docker push <dockerhub_username>/<repository_name>:<tag>
 ```

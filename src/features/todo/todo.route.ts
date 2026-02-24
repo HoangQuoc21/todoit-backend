@@ -96,16 +96,18 @@ todoRouter.post(
   "/",
   [
     middlewares.isAuthenticatedHandler,
-    body(FORM_FIELDS.TITLE).notEmpty().withMessage("Title is required"),
+    body(FORM_FIELDS.TITLE)
+      .notEmpty()
+      .withMessage(`${FORM_FIELDS.TITLE} is required`),
     body(FORM_FIELDS.CONTENT).optional().isString(),
     body(FORM_FIELDS.DUE_DATE)
       .optional()
       .isNumeric()
-      .withMessage("Due date must be a numeric timestamp"),
+      .withMessage(`${FORM_FIELDS.DUE_DATE} must be a numeric timestamp`),
     body(FORM_FIELDS.CATEGORY_ID)
       .optional()
       .isMongoId()
-      .withMessage("Invalid category ID"),
+      .withMessage(`${FORM_FIELDS.CATEGORY_ID} must be a valid category ID`),
     validators.bodyImageUrlValidator,
   ],
   todoController.createTodo,

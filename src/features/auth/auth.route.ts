@@ -74,7 +74,7 @@ authRouter.post(
   [
     body(FORM_FIELDS.EMAIL)
       .isEmail()
-      .withMessage("Email must be valid")
+      .withMessage(`${FORM_FIELDS.EMAIL} must be a valid email`)
       .custom(async (value) => {
         const existingUser = await UserModel.findOne({ email: value });
         if (existingUser) {
@@ -92,7 +92,7 @@ authRouter.post(
       .trim()
       .not()
       .isEmpty()
-      .withMessage("Name is required"),
+      .withMessage(`${FORM_FIELDS.NAME} is required`),
   ],
   authController.signUp,
 );

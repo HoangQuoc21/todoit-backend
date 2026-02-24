@@ -192,20 +192,20 @@ userRouter.put(
     middlewares.isAuthenticatedHandler,
     body(FORM_FIELDS.EMAIL)
       .isEmail()
-      .withMessage("Email must be valid")
+      .withMessage(`${FORM_FIELDS.EMAIL} must be valid`)
       .normalizeEmail(),
     body(FORM_FIELDS.PASSWORD)
       .optional()
       .trim()
       .isLength({ min: PASSWORD_MIN_LENGTH })
       .withMessage(
-        `Password must be at least ${PASSWORD_MIN_LENGTH} characters long`,
+        `${FORM_FIELDS.PASSWORD} must be at least ${PASSWORD_MIN_LENGTH} characters long`,
       ),
     body(FORM_FIELDS.NAME)
       .trim()
       .not()
       .isEmpty()
-      .withMessage("Name is required"),
+      .withMessage(`${FORM_FIELDS.NAME} is required`),
     validators.bodyImageUrlValidator,
   ],
   userController.editUser,
