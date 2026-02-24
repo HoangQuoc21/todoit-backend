@@ -30,14 +30,42 @@ const authRouter = express.Router();
  *                 description: User's email address
  *               password:
  *                 type: string
- *                 minLength: 8
- *                 description: User's password (minimum 8 characters)
+ *                 minLength: 6
+ *                 description: User's password (minimum 6 characters)
  *               name:
  *                 type: string
  *                 description: User's full name
  *     responses:
  *       201:
  *         description: User successfully created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 errors:
+ *                   type: array
+ *                   nullable: true
+ *                   items:
+ *                     type: object
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                     imageUrl:
+ *                       type: string
+ *                       nullable: true
+ *                     accessToken:
+ *                       type: string
  *       400:
  *         description: Validation error or email already in use
  */
@@ -91,15 +119,45 @@ authRouter.post(
  *                 description: User's email address
  *               password:
  *                 type: string
- *                 minLength: 8
- *                 description: User's password
+ *                 minLength: 6
+ *                 description: User's password (minimum 6 characters)
  *     responses:
  *       200:
  *         description: Successfully signed in
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 errors:
+ *                   type: array
+ *                   nullable: true
+ *                   items:
+ *                     type: object
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                     imageUrl:
+ *                       type: string
+ *                       nullable: true
+ *                     accessToken:
+ *                       type: string
  *       400:
- *         description: Invalid credentials
+ *         description: Validation error
  *       401:
- *         description: Unauthorized
+ *         description: Incorrect password
+ *       404:
+ *         description: User not found
  */
 authRouter.post(
   "/sign-in",
@@ -126,6 +184,23 @@ authRouter.post(
  *     responses:
  *       200:
  *         description: Successfully signed out
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 errors:
+ *                   type: array
+ *                   nullable: true
+ *                   items:
+ *                     type: object
+ *                 data:
+ *                   type: object
+ *                   nullable: true
  *       401:
  *         description: Unauthorized - user not authenticated
  */

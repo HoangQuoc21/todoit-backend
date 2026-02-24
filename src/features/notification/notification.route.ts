@@ -25,11 +25,16 @@ const notificationRouter = express.Router();
  *               properties:
  *                 success:
  *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 errors:
+ *                   type: array
+ *                   nullable: true
+ *                   items:
+ *                     type: object
  *                 data:
- *                   type: object
- *                   properties:
- *                     count:
- *                       type: number
+ *                   type: integer
+ *                   description: The number of unread notifications
  *       401:
  *         description: Unauthorized
  */
@@ -69,8 +74,36 @@ notificationRouter.get(
  *     responses:
  *       201:
  *         description: Notification created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 errors:
+ *                   type: array
+ *                   nullable: true
+ *                   items:
+ *                     type: object
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     title:
+ *                       type: string
+ *                     content:
+ *                       type: string
+ *                       nullable: true
+ *                     isRead:
+ *                       type: boolean
+ *                     sentAt:
+ *                       type: number
  *       400:
- *         description: Validation error
+ *         description: Validation error or user not found
  *       401:
  *         description: Unauthorized
  */
@@ -106,6 +139,19 @@ notificationRouter.post(
  *     tags: [Notification]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           minimum: 0
+ *         description: Page number (0-indexed)
+ *       - in: query
+ *         name: size
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *         description: Number of items per page
  *     responses:
  *       200:
  *         description: List of all notifications
@@ -116,22 +162,43 @@ notificationRouter.post(
  *               properties:
  *                 success:
  *                   type: boolean
- *                 data:
+ *                 message:
+ *                   type: string
+ *                 errors:
  *                   type: array
+ *                   nullable: true
  *                   items:
  *                     type: object
- *                     properties:
- *                       id:
- *                         type: string
- *                       title:
- *                         type: string
- *                       content:
- *                         type: string
- *                         nullable: true
- *                       isRead:
- *                         type: boolean
- *                       createdAt:
- *                         type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     meta:
+ *                       type: object
+ *                       properties:
+ *                         page:
+ *                           type: integer
+ *                         size:
+ *                           type: integer
+ *                         totalItems:
+ *                           type: integer
+ *                         totalPages:
+ *                           type: integer
+ *                     items:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                           title:
+ *                             type: string
+ *                           content:
+ *                             type: string
+ *                             nullable: true
+ *                           isRead:
+ *                             type: boolean
+ *                           sentAt:
+ *                             type: number
  *       401:
  *         description: Unauthorized
  */
@@ -166,6 +233,13 @@ notificationRouter.get(
  *               properties:
  *                 success:
  *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 errors:
+ *                   type: array
+ *                   nullable: true
+ *                   items:
+ *                     type: object
  *                 data:
  *                   type: object
  *                   properties:
@@ -178,14 +252,14 @@ notificationRouter.get(
  *                       nullable: true
  *                     isRead:
  *                       type: boolean
- *                     createdAt:
- *                       type: string
+ *                     sentAt:
+ *                       type: number
  *       400:
  *         description: Invalid notification ID format
  *       401:
  *         description: Unauthorized
  *       403:
- *         description: Forbidden (if the notification does not belong to the user)
+ *         description: Forbidden - notification does not belong to the user
  *       404:
  *         description: Notification not found
  */
@@ -206,6 +280,23 @@ notificationRouter.get(
  *     responses:
  *       200:
  *         description: All notifications marked as read successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 errors:
+ *                   type: array
+ *                   nullable: true
+ *                   items:
+ *                     type: object
+ *                 data:
+ *                   type: object
+ *                   nullable: true
  *       401:
  *         description: Unauthorized
  */
@@ -233,12 +324,29 @@ notificationRouter.patch(
  *     responses:
  *       200:
  *         description: Notification marked as read successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 errors:
+ *                   type: array
+ *                   nullable: true
+ *                   items:
+ *                     type: object
+ *                 data:
+ *                   type: object
+ *                   nullable: true
  *       400:
  *         description: Invalid notification ID format
  *       401:
  *         description: Unauthorized
  *       403:
- *         description: Forbidden (if the notification does not belong to the user)
+ *         description: Forbidden - notification does not belong to the user
  *       404:
  *         description: Notification not found
  */
@@ -259,6 +367,23 @@ notificationRouter.patch(
  *     responses:
  *       200:
  *         description: All notifications deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 errors:
+ *                   type: array
+ *                   nullable: true
+ *                   items:
+ *                     type: object
+ *                 data:
+ *                   type: object
+ *                   nullable: true
  *       401:
  *         description: Unauthorized
  */
@@ -286,12 +411,29 @@ notificationRouter.delete(
  *     responses:
  *       200:
  *         description: Notification deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 errors:
+ *                   type: array
+ *                   nullable: true
+ *                   items:
+ *                     type: object
+ *                 data:
+ *                   type: object
+ *                   nullable: true
  *       400:
  *         description: Invalid notification ID format
  *       401:
  *         description: Unauthorized
  *       403:
- *         description: Forbidden (if the notification does not belong to the user)
+ *         description: Forbidden - notification does not belong to the user
  *       404:
  *         description: Notification not found
  */

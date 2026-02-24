@@ -30,6 +30,10 @@ const todoRouter = express.Router();
  *               content:
  *                 type: string
  *                 description: Todo content (optional)
+ *               imageUrl:
+ *                 type: string
+ *                 format: uri
+ *                 description: Cloudinary image URL (optional)
  *               dueDate:
  *                 type: number
  *                 description: Due date as numeric timestamp (optional)
@@ -48,6 +52,11 @@ const todoRouter = express.Router();
  *                   type: boolean
  *                 message:
  *                   type: string
+ *                 errors:
+ *                   type: array
+ *                   nullable: true
+ *                   items:
+ *                     type: object
  *                 data:
  *                   type: object
  *                   properties:
@@ -58,14 +67,26 @@ const todoRouter = express.Router();
  *                     content:
  *                       type: string
  *                       nullable: true
- *                     dueDate:
+ *                     imageUrl:
  *                       type: string
+ *                       nullable: true
+ *                     dueDate:
+ *                       type: number
  *                       nullable: true
  *                     isCompleted:
  *                       type: boolean
  *                     category:
  *                       type: object
  *                       nullable: true
+ *                       properties:
+ *                         id:
+ *                           type: string
+ *                         name:
+ *                           type: string
+ *                         isPublic:
+ *                           type: boolean
+ *                         isOwner:
+ *                           type: boolean
  *       400:
  *         description: Validation error
  *       401:
@@ -98,6 +119,19 @@ todoRouter.post(
  *     tags: [Todo]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           minimum: 0
+ *         description: Page number (0-indexed)
+ *       - in: query
+ *         name: size
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *         description: Number of items per page
  *     responses:
  *       200:
  *         description: List of all todos
@@ -108,26 +142,59 @@ todoRouter.post(
  *               properties:
  *                 success:
  *                   type: boolean
- *                 data:
+ *                 message:
+ *                   type: string
+ *                 errors:
  *                   type: array
+ *                   nullable: true
  *                   items:
  *                     type: object
- *                     properties:
- *                       id:
- *                         type: string
- *                       title:
- *                         type: string
- *                       content:
- *                         type: string
- *                         nullable: true
- *                       dueDate:
- *                         type: string
- *                         nullable: true
- *                       isCompleted:
- *                         type: boolean
- *                       category:
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     meta:
+ *                       type: object
+ *                       properties:
+ *                         page:
+ *                           type: integer
+ *                         size:
+ *                           type: integer
+ *                         totalItems:
+ *                           type: integer
+ *                         totalPages:
+ *                           type: integer
+ *                     items:
+ *                       type: array
+ *                       items:
  *                         type: object
- *                         nullable: true
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                           title:
+ *                             type: string
+ *                           content:
+ *                             type: string
+ *                             nullable: true
+ *                           imageUrl:
+ *                             type: string
+ *                             nullable: true
+ *                           dueDate:
+ *                             type: number
+ *                             nullable: true
+ *                           isCompleted:
+ *                             type: boolean
+ *                           category:
+ *                             type: object
+ *                             nullable: true
+ *                             properties:
+ *                               id:
+ *                                 type: string
+ *                               name:
+ *                                 type: string
+ *                               isPublic:
+ *                                 type: boolean
+ *                               isOwner:
+ *                                 type: boolean
  *       401:
  *         description: Unauthorized
  */
@@ -162,6 +229,13 @@ todoRouter.get(
  *               properties:
  *                 success:
  *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 errors:
+ *                   type: array
+ *                   nullable: true
+ *                   items:
+ *                     type: object
  *                 data:
  *                   type: object
  *                   properties:
@@ -172,14 +246,26 @@ todoRouter.get(
  *                     content:
  *                       type: string
  *                       nullable: true
- *                     dueDate:
+ *                     imageUrl:
  *                       type: string
+ *                       nullable: true
+ *                     dueDate:
+ *                       type: number
  *                       nullable: true
  *                     isCompleted:
  *                       type: boolean
  *                     category:
  *                       type: object
  *                       nullable: true
+ *                       properties:
+ *                         id:
+ *                           type: string
+ *                         name:
+ *                           type: string
+ *                         isPublic:
+ *                           type: boolean
+ *                         isOwner:
+ *                           type: boolean
  *       400:
  *         description: Invalid todo ID format
  *       401:
@@ -221,18 +307,19 @@ todoRouter.get(
  *               content:
  *                 type: string
  *                 description: Todo content (optional)
+ *               imageUrl:
+ *                 type: string
+ *                 format: uri
+ *                 description: Cloudinary image URL (optional)
  *               dueDate:
  *                 type: number
  *                 description: Due date as numeric timestamp (optional)
- *               imageUrl:
- *                 type: file
- *                 description: Image file (optional)
  *               categoryId:
  *                 type: string
  *                 description: MongoDB Category ID (optional)
  *     responses:
  *       200:
- *         description: Todo details retrieved successfully
+ *         description: Todo updated successfully
  *         content:
  *           application/json:
  *             schema:
@@ -240,6 +327,13 @@ todoRouter.get(
  *               properties:
  *                 success:
  *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 errors:
+ *                   type: array
+ *                   nullable: true
+ *                   items:
+ *                     type: object
  *                 data:
  *                   type: object
  *                   properties:
@@ -250,18 +344,32 @@ todoRouter.get(
  *                     content:
  *                       type: string
  *                       nullable: true
- *                     dueDate:
+ *                     imageUrl:
  *                       type: string
+ *                       nullable: true
+ *                     dueDate:
+ *                       type: number
  *                       nullable: true
  *                     isCompleted:
  *                       type: boolean
  *                     category:
  *                       type: object
  *                       nullable: true
+ *                       properties:
+ *                         id:
+ *                           type: string
+ *                         name:
+ *                           type: string
+ *                         isPublic:
+ *                           type: boolean
+ *                         isOwner:
+ *                           type: boolean
  *       400:
  *         description: Validation error or invalid todo ID
  *       401:
  *         description: Unauthorized
+ *       403:
+ *         description: Forbidden - you do not have permission to edit this todo
  *       404:
  *         description: Todo not found
  */
@@ -306,6 +414,23 @@ todoRouter.put(
  *     responses:
  *       200:
  *         description: Todo deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 errors:
+ *                   type: array
+ *                   nullable: true
+ *                   items:
+ *                     type: object
+ *                 data:
+ *                   type: object
+ *                   nullable: true
  *       400:
  *         description: Invalid todo ID format
  *       401:
@@ -348,7 +473,7 @@ todoRouter.delete(
  *                 description: New completion status
  *     responses:
  *       200:
- *         description: Todo details retrieved successfully
+ *         description: Todo completion status updated successfully
  *         content:
  *           application/json:
  *             schema:
@@ -356,6 +481,13 @@ todoRouter.delete(
  *               properties:
  *                 success:
  *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 errors:
+ *                   type: array
+ *                   nullable: true
+ *                   items:
+ *                     type: object
  *                 data:
  *                   type: object
  *                   properties:
@@ -366,14 +498,26 @@ todoRouter.delete(
  *                     content:
  *                       type: string
  *                       nullable: true
- *                     dueDate:
+ *                     imageUrl:
  *                       type: string
+ *                       nullable: true
+ *                     dueDate:
+ *                       type: number
  *                       nullable: true
  *                     isCompleted:
  *                       type: boolean
  *                     category:
  *                       type: object
  *                       nullable: true
+ *                       properties:
+ *                         id:
+ *                           type: string
+ *                         name:
+ *                           type: string
+ *                         isPublic:
+ *                           type: boolean
+ *                         isOwner:
+ *                           type: boolean
  *       400:
  *         description: Validation error or invalid todo ID
  *       401:

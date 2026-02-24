@@ -25,6 +25,13 @@ const userRouter = express.Router();
  *               properties:
  *                 success:
  *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 errors:
+ *                   type: array
+ *                   nullable: true
+ *                   items:
+ *                     type: object
  *                 data:
  *                   type: object
  *                   properties:
@@ -34,8 +41,16 @@ const userRouter = express.Router();
  *                       type: string
  *                     name:
  *                       type: string
+ *                     imageUrl:
+ *                       type: string
+ *                       nullable: true
+ *                     accessToken:
+ *                       type: string
+ *                       nullable: true
  *       401:
  *         description: Unauthorized
+ *       404:
+ *         description: User not found
  */
 userRouter.get("/me", middlewares.isAuthenticatedHandler, userController.getMe);
 
@@ -62,12 +77,30 @@ userRouter.get("/me", middlewares.isAuthenticatedHandler, userController.getMe);
  *             schema:
  *               type: object
  *               properties:
- *                 id:
+ *                 success:
+ *                   type: boolean
+ *                 message:
  *                   type: string
- *                 email:
- *                   type: string
- *                 name:
- *                   type: string
+ *                 errors:
+ *                   type: array
+ *                   nullable: true
+ *                   items:
+ *                     type: object
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                     imageUrl:
+ *                       type: string
+ *                       nullable: true
+ *                     accessToken:
+ *                       type: string
+ *                       nullable: true
  *       400:
  *         description: Invalid user ID format
  *       401:
@@ -95,6 +128,9 @@ userRouter.get(
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - email
+ *               - name
  *             properties:
  *               email:
  *                 type: string
@@ -102,18 +138,53 @@ userRouter.get(
  *                 description: User's email address
  *               password:
  *                 type: string
- *                 minLength: 8
- *                 description: User's new password
+ *                 minLength: 6
+ *                 description: User's new password (optional, minimum 6 characters)
  *               name:
  *                 type: string
  *                 description: User's full name
+ *               imageUrl:
+ *                 type: string
+ *                 format: uri
+ *                 description: Cloudinary image URL (optional)
  *     responses:
  *       200:
  *         description: User updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 errors:
+ *                   type: array
+ *                   nullable: true
+ *                   items:
+ *                     type: object
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                     imageUrl:
+ *                       type: string
+ *                       nullable: true
+ *                     accessToken:
+ *                       type: string
+ *                       nullable: true
  *       400:
  *         description: Validation error
  *       401:
  *         description: Unauthorized
+ *       404:
+ *         description: User not found
  */
 userRouter.put(
   "/",
@@ -151,8 +222,27 @@ userRouter.put(
  *     responses:
  *       200:
  *         description: User deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 errors:
+ *                   type: array
+ *                   nullable: true
+ *                   items:
+ *                     type: object
+ *                 data:
+ *                   type: object
+ *                   nullable: true
  *       401:
  *         description: Unauthorized
+ *       404:
+ *         description: User not found
  */
 userRouter.delete(
   "/",
@@ -160,6 +250,53 @@ userRouter.delete(
   userController.deleteUser,
 );
 
+/**
+ * @openapi
+ * /user/update-push-token:
+ *   patch:
+ *     summary: Update the push notification token for the current user
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - pushToken
+ *             properties:
+ *               pushToken:
+ *                 type: string
+ *                 description: Expo push notification token
+ *     responses:
+ *       200:
+ *         description: Push token updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 errors:
+ *                   type: array
+ *                   nullable: true
+ *                   items:
+ *                     type: object
+ *                 data:
+ *                   type: object
+ *                   nullable: true
+ *       400:
+ *         description: Validation error
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: User not found
+ */
 userRouter.patch(
   "/update-push-token",
   [

@@ -15,22 +15,63 @@ const categoryRouter = express.Router();
  *     tags: [Category]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           minimum: 0
+ *         description: Page number (0-indexed)
+ *       - in: query
+ *         name: size
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *         description: Number of items per page
  *     responses:
  *       200:
  *         description: List of all categories
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: string
- *                   name:
- *                     type: string
- *                   isPublic:
- *                     type: boolean
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 errors:
+ *                   type: array
+ *                   nullable: true
+ *                   items:
+ *                     type: object
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     meta:
+ *                       type: object
+ *                       properties:
+ *                         page:
+ *                           type: integer
+ *                         size:
+ *                           type: integer
+ *                         totalItems:
+ *                           type: integer
+ *                         totalPages:
+ *                           type: integer
+ *                     items:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                           name:
+ *                             type: string
+ *                           isPublic:
+ *                             type: boolean
+ *                           isOwner:
+ *                             type: boolean
  *       401:
  *         description: Unauthorized
  */
@@ -63,12 +104,26 @@ categoryRouter.get(
  *             schema:
  *               type: object
  *               properties:
- *                 id:
- *                   type: string
- *                 name:
- *                   type: string
- *                 isPublic:
+ *                 success:
  *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 errors:
+ *                   type: array
+ *                   nullable: true
+ *                   items:
+ *                     type: object
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                     isPublic:
+ *                       type: boolean
+ *                     isOwner:
+ *                       type: boolean
  *       400:
  *         description: Invalid category ID format
  *       401:
@@ -109,8 +164,33 @@ categoryRouter.get(
  *     responses:
  *       201:
  *         description: Category created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 errors:
+ *                   type: array
+ *                   nullable: true
+ *                   items:
+ *                     type: object
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                     isPublic:
+ *                       type: boolean
+ *                     isOwner:
+ *                       type: boolean
  *       400:
- *         description: Validation error
+ *         description: Validation error or category already exists
  *       401:
  *         description: Unauthorized
  */
@@ -170,10 +250,37 @@ categoryRouter.post(
  *     responses:
  *       200:
  *         description: Category updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 errors:
+ *                   type: array
+ *                   nullable: true
+ *                   items:
+ *                     type: object
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                     isPublic:
+ *                       type: boolean
+ *                     isOwner:
+ *                       type: boolean
  *       400:
  *         description: Validation error or invalid category ID
  *       401:
  *         description: Unauthorized
+ *       403:
+ *         description: Forbidden - you do not have permission to edit this category
  *       404:
  *         description: Category not found
  */
@@ -217,10 +324,29 @@ categoryRouter.put(
  *     responses:
  *       200:
  *         description: Category deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 errors:
+ *                   type: array
+ *                   nullable: true
+ *                   items:
+ *                     type: object
+ *                 data:
+ *                   type: object
+ *                   nullable: true
  *       400:
- *         description: Invalid category ID format
+ *         description: Invalid category ID format or category is being used by todos
  *       401:
  *         description: Unauthorized
+ *       403:
+ *         description: Forbidden - you do not have permission to delete this category
  *       404:
  *         description: Category not found
  */
