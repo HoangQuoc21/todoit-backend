@@ -62,3 +62,13 @@ docker images
 
 docker push <dockerhub_username>/<repository_name>:<tag>
 ```
+
+# Let's someone else use the published image
+
+```bash
+docker pull <dockerhub_username>/<repository_name>:<tag>
+
+# Give them the .env and compose.yaml file
+
+docker compose up -d
+```
