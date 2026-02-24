@@ -28,7 +28,7 @@
     "generate-api-key": "^1.0.2",
     "http-status": "^2.1.0",
     "mongodb": "^7.1.0",
-    "mongoose": "^9.2.1",
+    "mongoose": "^9.2.2",
     "multer": "^2.0.2",
     "multer-storage-cloudinary": "^4.0.0",
     "swagger-jsdoc": "^6.2.8",
@@ -46,13 +46,13 @@
     "@types/node": "^25.3.0",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
-    "eslint": "^10.0.1",
+    "eslint": "^10.0.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
     "globals": "^17.3.0",
     "jiti": "^2.6.1",
     "prettier": "^3.8.1",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.56.0"
+    "typescript-eslint": "^8.56.1"
   }
 }
