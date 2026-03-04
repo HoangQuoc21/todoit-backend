@@ -12,6 +12,7 @@ import {
   categoryRouter,
   notificationRouter,
   todoRouter,
+  uploadRouter,
   userRouter,
 } from "./src/features";
 
@@ -38,12 +39,8 @@ app.use("/auth", authRouter);
 app.use("/category", categoryRouter);
 app.use("/notification", notificationRouter);
 app.use("/todo", todoRouter);
+app.use("/upload", uploadRouter);
 app.use("/user", userRouter);
-app.post("/upload-image", [
-  middlewares.isAuthenticatedHandler,
-  middlewares.cloudinaryUploadHandler,
-  middlewares.uploadImageHandler,
-]);
 app.use(middlewares.notFoundHandler);
 app.use(middlewares.errorHandler);
 

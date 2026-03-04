@@ -39,6 +39,10 @@ const options: swaggerJSDoc.Options = {
         name: "Notification",
         description: "Notification management endpoints",
       },
+      {
+        name: "Upload",
+        description: "File upload endpoints",
+      },
     ],
     components: {
       securitySchemes: {
