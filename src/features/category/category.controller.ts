@@ -23,8 +23,8 @@ const getCategories: RequestHandler = async (
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req as any).userId;
-    const page = req.query.page ?? PAGINATION.DEFAULT_PAGE;
-    const size = req.query.size ?? PAGINATION.DEFAULT_SIZE;
+    const page = req.query.page ?? Number(PAGINATION.DEFAULT_PAGE);
+    const size = req.query.size ?? Number(PAGINATION.DEFAULT_SIZE);
 
     const totalItems = await CategoryModel.countDocuments({
       $or: [{ isPublic: true }, { creatorId: new ObjectId(userId) }],

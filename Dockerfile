@@ -12,7 +12,7 @@ ARG PNPM_VERSION=10.30.1
 FROM node:${NODE_VERSION}-alpine
 
 # Use production node environment by default.
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 # Install pnpm.
 RUN --mount=type=cache,target=/root/.npm \
@@ -39,4 +39,4 @@ COPY . .
 EXPOSE 3000
 
 # Run the application.
-CMD pnpm start
+ENTRYPOINT ["pnpm", "start"]

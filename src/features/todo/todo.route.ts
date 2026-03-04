@@ -133,7 +133,7 @@ todoRouter.post(
  *         schema:
  *           type: integer
  *           minimum: 1
- *         description: Number of items per page
+ *         description: Number of items per page (default 20)
  *     responses:
  *       200:
  *         description: List of all todos
