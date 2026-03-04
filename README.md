@@ -43,7 +43,7 @@ docker compose up --d
 
 docker images
 
-# If the image in DockerFile is named "<dockerhub_username>/<repository_name>:<tag>" Then doesn't need to run this command
+# If the image in compose.yaml file is named "<dockerhub_username>/<repository_name>:<tag>" Then doesn't need to run this command
 docker tag <local_image_name>:<local_tag> <dockerhub_username>/<repository_name>:<tag>
 
 docker push <dockerhub_username>/<repository_name>:<tag>
