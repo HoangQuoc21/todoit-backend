@@ -13,6 +13,10 @@ const options: swaggerJSDoc.Options = {
         url: "http://localhost:3000",
         description: "Development server",
       },
+      {
+        url: "https://todoit-backend-sa5w.onrender.com",
+        description: "Deployment server",
+      },
     ],
     tags: [
       {
