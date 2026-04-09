@@ -72,3 +72,19 @@ docker pull <dockerhub_username>/<repository_name>:<tag>
 
 docker compose up -d
 ```
+
+# Build multi-platform images
+
+```bash
+# Create docker buildx builder (only do this if there is no builder instance)
+docker buildx create --name my-builder --use
+
+# Bootstrap builder
+docker buildx inspect --bootstrap
+
+# Build
+docker buildx build \
+  --platform linux/amd64,linux/arm64 \
+  -t hoangquoc21/todoit:backend-latest \
+  --push .
+```

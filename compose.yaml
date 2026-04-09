@@ -9,12 +9,9 @@
 # https://github.com/docker/awesome-compose
 services:
   server:
-    # container_name: todoit-backend
+    container_name: todoit-backend
     image: hoangquoc21/todoit:backend-latest
-    build:
-      context: .
-    environment:
-      NODE_ENV: production
+    restart: always
     env_file:
       - .env
     ports:
