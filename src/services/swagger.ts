@@ -14,7 +14,7 @@ const options: swaggerJSDoc.Options = {
         description: "Development server",
       },
       {
-        url: "https://todoit-backend-sa5w.onrender.com",
+        url: "https://todoit-api.lamhoangquoc.id.vn",
         description: "Deployment server",
       },
     ],

@@ -7,11 +7,11 @@ import { FORM_FIELDS } from "./constants";
 import { cloudinaryService } from "./services";
 
 const rootHandler: RequestHandler = (req, res, next) => {
-  const response: ApiResponse = {
+  const response: ApiResponse<string> = {
     success: true,
     message: "Welcome to Todoit API",
     errors: null,
-    data: null,
+    data: "API docs is available at /api-docs",
   };
 
   res.status(status.OK).json(response);
