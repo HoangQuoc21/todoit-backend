@@ -26,6 +26,7 @@ type User = {
   name: string;
   imageUrl: string | null;
   accessToken: string | null;
+  pushToken: string | null;
 };
 
 type Category = {

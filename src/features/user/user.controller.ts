@@ -31,6 +31,7 @@ const getUser: RequestHandler<{ id: string }> = async (req, res, next) => {
         name: user.name,
         imageUrl: user.imageUrl ?? null,
         accessToken: null,
+        pushToken: null,
       },
     };
 
@@ -102,7 +103,8 @@ const editUser: RequestHandler<
         email: user.email,
         name: user.name,
         imageUrl: user.imageUrl ?? null,
-        accessToken: null,
+        accessToken: user.accessToken ?? null,
+        pushToken: user.pushToken ?? null,
       },
     };
 
@@ -183,7 +185,8 @@ const getMe: RequestHandler = async (req, res, next) => {
         email: user.email,
         name: user.name,
         imageUrl: user.imageUrl ?? null,
-        accessToken: null,
+        accessToken: user.accessToken ?? null,
+        pushToken: user.pushToken ?? null,
       },
     };
 
