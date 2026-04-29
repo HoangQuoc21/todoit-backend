@@ -47,9 +47,9 @@ const userRouter = express.Router();
  *                     accessToken:
  *                       type: string
  *                       nullable: true
- *                    pushToken:
- *                      type: string
- *                      nullable: true
+ *                     pushToken:
+ *                       type: string
+ *                       nullable: true
  *       401:
  *         description: Unauthorized
  *       404:

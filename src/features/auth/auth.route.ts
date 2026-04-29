@@ -66,6 +66,9 @@ const authRouter = express.Router();
  *                       nullable: true
  *                     accessToken:
  *                       type: string
+ *                     pushToken:
+ *                       type: string
+ *                       nullable: true
  *       400:
  *         description: Validation error or email already in use
  */
@@ -152,6 +155,9 @@ authRouter.post(
  *                       nullable: true
  *                     accessToken:
  *                       type: string
+ *                     pushToken:
+ *                       type: string
+ *                       nullable: true
  *       400:
  *         description: Validation error
  *       401:

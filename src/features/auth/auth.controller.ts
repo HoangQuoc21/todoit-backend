@@ -44,6 +44,7 @@ const signUp: RequestHandler<
         name: newUser.name,
         imageUrl: newUser.imageUrl ?? null,
         accessToken: newUser.accessToken,
+        pushToken: null,
       },
     };
 
@@ -99,6 +100,7 @@ const signIn: RequestHandler<
         name: user.name,
         imageUrl: user.imageUrl ?? null,
         accessToken: user.accessToken,
+        pushToken: user.pushToken ?? null,
       },
     };
 
