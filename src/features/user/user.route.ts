@@ -47,6 +47,9 @@ const userRouter = express.Router();
  *                     accessToken:
  *                       type: string
  *                       nullable: true
+ *                    pushToken:
+ *                      type: string
+ *                      nullable: true
  *       401:
  *         description: Unauthorized
  *       404:
@@ -99,6 +102,9 @@ userRouter.get("/me", middlewares.isAuthenticatedHandler, userController.getMe);
  *                       type: string
  *                       nullable: true
  *                     accessToken:
+ *                       type: string
+ *                       nullable: true
+ *                     pushToken:
  *                       type: string
  *                       nullable: true
  *       400:
@@ -177,6 +183,9 @@ userRouter.get(
  *                       type: string
  *                       nullable: true
  *                     accessToken:
+ *                       type: string
+ *                       nullable: true
+ *                     pushToken:
  *                       type: string
  *                       nullable: true
  *       400:
