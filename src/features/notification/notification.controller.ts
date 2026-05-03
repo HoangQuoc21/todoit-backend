@@ -56,7 +56,7 @@ const createNotification: RequestHandler<
     };
     return res.status(status.CREATED).json(response);
   } catch (err) {
-    next(errorHelper.handleServerError(err as HttpError));
+    next(errorHelper.createServerError(err as HttpError));
   }
 };
 
@@ -109,7 +109,7 @@ const getNotifications: RequestHandler = async (
 
     return res.status(status.OK).json(response);
   } catch (err) {
-    next(errorHelper.handleServerError(err as HttpError));
+    next(errorHelper.createServerError(err as HttpError));
   }
 };
 
@@ -155,7 +155,7 @@ const getNotification: RequestHandler<{ id: string }> = async (
 
     return res.status(status.OK).json(response);
   } catch (err) {
-    next(errorHelper.handleServerError(err as HttpError));
+    next(errorHelper.createServerError(err as HttpError));
   }
 };
 
@@ -179,7 +179,7 @@ const getUnreadCount: RequestHandler = async (req, res, next) => {
 
     return res.status(status.OK).json(response);
   } catch (err) {
-    next(errorHelper.handleServerError(err as HttpError));
+    next(errorHelper.createServerError(err as HttpError));
   }
 };
 
@@ -218,7 +218,7 @@ const markRead: RequestHandler<{ id: string }> = async (req, res, next) => {
 
     return res.status(status.OK).json(response);
   } catch (err) {
-    next(errorHelper.handleServerError(err as HttpError));
+    next(errorHelper.createServerError(err as HttpError));
   }
 };
 
@@ -242,7 +242,7 @@ const markReadAll: RequestHandler = async (req, res, next) => {
 
     return res.status(status.OK).json(response);
   } catch (err) {
-    next(errorHelper.handleServerError(err as HttpError));
+    next(errorHelper.createServerError(err as HttpError));
   }
 };
 
@@ -263,7 +263,7 @@ const deleteNotifications: RequestHandler = async (req, res, next) => {
 
     return res.status(status.OK).json(response);
   } catch (err) {
-    next(errorHelper.handleServerError(err as HttpError));
+    next(errorHelper.createServerError(err as HttpError));
   }
 };
 
@@ -305,7 +305,7 @@ const deleteNotification: RequestHandler<{ id: string }> = async (
 
     return res.status(status.OK).json(response);
   } catch (err) {
-    next(errorHelper.handleServerError(err as HttpError));
+    next(errorHelper.createServerError(err as HttpError));
   }
 };
 

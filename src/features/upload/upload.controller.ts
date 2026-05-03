@@ -23,7 +23,7 @@ const uploadImage: RequestHandler = (req, res, next) => {
 
     res.status(status.OK).json(response);
   } catch (err) {
-    next(errorHelper.handleServerError(err as HttpError));
+    next(errorHelper.createServerError(err as HttpError));
   }
 };
 

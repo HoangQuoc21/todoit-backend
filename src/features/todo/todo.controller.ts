@@ -69,7 +69,7 @@ const createTodo: RequestHandler<
 
     res.status(status.CREATED).json(response);
   } catch (err) {
-    next(errorHelper.handleServerError(err as HttpError));
+    next(errorHelper.createServerError(err as HttpError));
   }
 };
 
@@ -130,7 +130,7 @@ const getTodos: RequestHandler = async (
 
     res.status(status.OK).json(response);
   } catch (err) {
-    next(errorHelper.handleServerError(err as HttpError));
+    next(errorHelper.createServerError(err as HttpError));
   }
 };
 
@@ -152,7 +152,7 @@ const getTodo: RequestHandler<{ id: string }> = async (req, res, next) => {
         "Todo not found",
         null,
       );
-      return next(errorHelper.handleServerError(returnError));
+      return next(errorHelper.createServerError(returnError));
     }
 
     const populatedCategory = todo.categoryId as any;
@@ -181,7 +181,7 @@ const getTodo: RequestHandler<{ id: string }> = async (req, res, next) => {
 
     res.status(status.OK).json(response);
   } catch (err) {
-    next(errorHelper.handleServerError(err as HttpError));
+    next(errorHelper.createServerError(err as HttpError));
   }
 };
 
@@ -203,7 +203,7 @@ const deleteTodo: RequestHandler<{ id: string }> = async (req, res, next) => {
         "Todo not found",
         null,
       );
-      return next(errorHelper.handleServerError(returnError));
+      return next(errorHelper.createServerError(returnError));
     }
 
     let deleteImageMessage = "";
@@ -223,7 +223,7 @@ const deleteTodo: RequestHandler<{ id: string }> = async (req, res, next) => {
 
     res.status(status.OK).json(response);
   } catch (err) {
-    next(errorHelper.handleServerError(err as HttpError));
+    next(errorHelper.createServerError(err as HttpError));
   }
 };
 
@@ -253,7 +253,7 @@ const editTodo: RequestHandler<
           "Category with the provided ID does not exist",
           null,
         );
-        return next(errorHelper.handleServerError(returnError));
+        return next(errorHelper.createServerError(returnError));
       }
     }
 
@@ -265,7 +265,7 @@ const editTodo: RequestHandler<
         "Todo not found",
         null,
       );
-      return next(errorHelper.handleServerError(returnError));
+      return next(errorHelper.createServerError(returnError));
     }
 
     if (updatedTodo.creatorId.toString() !== userId) {
@@ -274,7 +274,7 @@ const editTodo: RequestHandler<
         "You do not have permission to edit this todo",
         null,
       );
-      return next(errorHelper.handleServerError(returnError));
+      return next(errorHelper.createServerError(returnError));
     }
 
     updatedTodo.title = title;
@@ -340,7 +340,7 @@ const editTodo: RequestHandler<
 
     res.status(status.OK).json(response);
   } catch (err) {
-    next(errorHelper.handleServerError(err as HttpError));
+    next(errorHelper.createServerError(err as HttpError));
   }
 };
 
@@ -367,7 +367,7 @@ const toggleCompleted: RequestHandler<
         "Todo not found",
         null,
       );
-      return next(errorHelper.handleServerError(returnError));
+      return next(errorHelper.createServerError(returnError));
     }
 
     todo.isCompleted = isCompleted;
@@ -400,7 +400,7 @@ const toggleCompleted: RequestHandler<
 
     res.status(status.OK).json(response);
   } catch (err) {
-    next(errorHelper.handleServerError(err as HttpError));
+    next(errorHelper.createServerError(err as HttpError));
   }
 };
 

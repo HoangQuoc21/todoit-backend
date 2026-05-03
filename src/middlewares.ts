@@ -59,14 +59,14 @@ const isAuthenticatedHandler: RequestHandler = async (req, res, next) => {
 
     next();
   } catch (err) {
-    next(errorHelper.handleServerError(err as HttpError));
+    next(errorHelper.createServerError(err as HttpError));
   }
 };
 
 const cloudinaryUploadHandler: RequestHandler = (req, res, next) => {
   cloudinaryService.parser.single(FORM_FIELDS.IMAGE)(req, res, (err) => {
     if (err) {
-      next(errorHelper.handleServerError(err as HttpError));
+      next(errorHelper.createServerError(err as HttpError));
     } else {
       next();
     }

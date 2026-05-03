@@ -3,7 +3,7 @@ import { HttpError } from "@/types";
 import { validationResult } from "express-validator";
 import type { NextFunction, Request } from "express";
 
-const handleServerError = (error: HttpError) => {
+const createServerError = (error: HttpError) => {
   const serverError = error;
   if (!serverError.statusCode) {
     serverError.statusCode = status.INTERNAL_SERVER_ERROR;
@@ -23,13 +23,13 @@ const handleValidationError = (req: Request, next: NextFunction) => {
       "Validation failed",
       errors.array(),
     );
-    next(errorHelper.handleServerError(httpError));
+    next(errorHelper.createServerError(httpError));
     return true;
   }
   return false;
 };
 
 export const errorHelper = {
-  handleServerError,
+  createServerError,
   handleValidationError,
 };

@@ -59,7 +59,7 @@ const getCategories: RequestHandler = async (
 
     res.status(status.OK).json(response);
   } catch (err) {
-    next(errorHelper.handleServerError(err as HttpError));
+    next(errorHelper.createServerError(err as HttpError));
   }
 };
 
@@ -91,7 +91,7 @@ const getCategory: RequestHandler<{ id: string }> = async (req, res, next) => {
 
     res.status(status.OK).json(response);
   } catch (err) {
-    next(errorHelper.handleServerError(err as HttpError));
+    next(errorHelper.createServerError(err as HttpError));
   }
 };
 
@@ -136,7 +136,7 @@ const createCategory: RequestHandler<
 
     res.status(status.CREATED).json(response);
   } catch (err) {
-    next(errorHelper.handleServerError(err as HttpError));
+    next(errorHelper.createServerError(err as HttpError));
   }
 };
 
@@ -186,7 +186,7 @@ const editCategory: RequestHandler<
 
     res.status(status.OK).json(response);
   } catch (err) {
-    next(errorHelper.handleServerError(err as HttpError));
+    next(errorHelper.createServerError(err as HttpError));
   }
 };
 
@@ -240,7 +240,7 @@ const deleteCategory: RequestHandler<{ id: string }> = async (
 
     res.status(status.OK).json(response);
   } catch (err) {
-    next(errorHelper.handleServerError(err as HttpError));
+    next(errorHelper.createServerError(err as HttpError));
   }
 };
 
