@@ -10,7 +10,7 @@ const signUp: RequestHandler<
   {},
   { email: string; password: string; name: string }
 > = async (req, res, next) => {
-  errorHelper.handleValidationError(req, next);
+  if (errorHelper.handleValidationError(req, next)) return;
 
   const { email, password, name } = req.body;
 
@@ -59,7 +59,7 @@ const signIn: RequestHandler<
   {},
   { email: string; password: string }
 > = async (req, res, next) => {
-  errorHelper.handleValidationError(req, next);
+  if (errorHelper.handleValidationError(req, next)) return;
 
   const { email, password } = req.body;
 
@@ -111,7 +111,7 @@ const signIn: RequestHandler<
 };
 
 const signOut: RequestHandler = async (req, res, next) => {
-  errorHelper.handleValidationError(req, next);
+  if (errorHelper.handleValidationError(req, next)) return;
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;

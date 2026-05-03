@@ -23,8 +23,10 @@ const handleValidationError = (req: Request, next: NextFunction) => {
       "Validation failed",
       errors.array(),
     );
-    return next(errorHelper.handleServerError(httpError));
+    next(errorHelper.handleServerError(httpError));
+    return true;
   }
+  return false;
 };
 
 export const errorHelper = {

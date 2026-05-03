@@ -6,7 +6,7 @@ import { errorHelper, tokenHelper, passwordHelper } from "@/helpers";
 import { cloudinaryService } from "@/services";
 
 const getUser: RequestHandler<{ id: string }> = async (req, res, next) => {
-  errorHelper.handleValidationError(req, next);
+  if (errorHelper.handleValidationError(req, next)) return;
 
   const { id } = req.params;
 
@@ -46,7 +46,7 @@ const editUser: RequestHandler<
   {},
   { email: string; password?: string; name: string; imageUrl?: string }
 > = async (req, res, next) => {
-  errorHelper.handleValidationError(req, next);
+  if (errorHelper.handleValidationError(req, next)) return;
 
   const { email, password, name, imageUrl } = req.body;
   const id = tokenHelper.parseTokenFromRequestHeader(req).userId;
@@ -115,7 +115,7 @@ const editUser: RequestHandler<
 };
 
 const deleteUser: RequestHandler = async (req, res, next) => {
-  errorHelper.handleValidationError(req, next);
+  if (errorHelper.handleValidationError(req, next)) return;
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
@@ -162,7 +162,7 @@ const deleteUser: RequestHandler = async (req, res, next) => {
 };
 
 const getMe: RequestHandler = async (req, res, next) => {
-  errorHelper.handleValidationError(req, next);
+  if (errorHelper.handleValidationError(req, next)) return;
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
@@ -201,7 +201,7 @@ const updatePushToken: RequestHandler<{}, {}, { pushToken: string }> = async (
   res,
   next,
 ) => {
-  errorHelper.handleValidationError(req, next);
+  if (errorHelper.handleValidationError(req, next)) return;
 
   const { pushToken } = req.body;
   const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;

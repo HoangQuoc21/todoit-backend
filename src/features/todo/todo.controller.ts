@@ -24,7 +24,7 @@ const createTodo: RequestHandler<
     categoryId?: string;
   }
 > = async (req, res, next) => {
-  errorHelper.handleValidationError(req, next);
+  if (errorHelper.handleValidationError(req, next)) return;
 
   try {
     const { title, content, imageUrl, dueDate, categoryId } = req.body;
@@ -80,7 +80,7 @@ const getTodos: RequestHandler = async (
   res,
   next,
 ) => {
-  errorHelper.handleValidationError(req as any, next);
+  if (errorHelper.handleValidationError(req as any, next)) return;
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req as any).userId;
@@ -135,7 +135,7 @@ const getTodos: RequestHandler = async (
 };
 
 const getTodo: RequestHandler<{ id: string }> = async (req, res, next) => {
-  errorHelper.handleValidationError(req, next);
+  if (errorHelper.handleValidationError(req, next)) return;
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
@@ -186,7 +186,7 @@ const getTodo: RequestHandler<{ id: string }> = async (req, res, next) => {
 };
 
 const deleteTodo: RequestHandler<{ id: string }> = async (req, res, next) => {
-  errorHelper.handleValidationError(req, next);
+  if (errorHelper.handleValidationError(req, next)) return;
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
@@ -238,7 +238,7 @@ const editTodo: RequestHandler<
     categoryId?: string;
   }
 > = async (req, res, next) => {
-  errorHelper.handleValidationError(req, next);
+  if (errorHelper.handleValidationError(req, next)) return;
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
@@ -349,7 +349,7 @@ const toggleCompleted: RequestHandler<
   {},
   { isCompleted: boolean }
 > = async (req, res, next) => {
-  errorHelper.handleValidationError(req, next);
+  if (errorHelper.handleValidationError(req, next)) return;
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;

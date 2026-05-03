@@ -18,7 +18,7 @@ const createNotification: RequestHandler<
   {},
   { userId: string; title: string; content?: string }
 > = async (req, res, next) => {
-  errorHelper.handleValidationError(req, next);
+  if (errorHelper.handleValidationError(req, next)) return;
 
   try {
     const { userId, title, content } = req.body;
@@ -67,7 +67,7 @@ const getNotifications: RequestHandler = async (
   res,
   next,
 ) => {
-  errorHelper.handleValidationError(req as any, next);
+  if (errorHelper.handleValidationError(req as any, next)) return;
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req as any).userId;
@@ -118,7 +118,7 @@ const getNotification: RequestHandler<{ id: string }> = async (
   res,
   next,
 ) => {
-  errorHelper.handleValidationError(req, next);
+  if (errorHelper.handleValidationError(req, next)) return;
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
@@ -160,7 +160,7 @@ const getNotification: RequestHandler<{ id: string }> = async (
 };
 
 const getUnreadCount: RequestHandler = async (req, res, next) => {
-  errorHelper.handleValidationError(req, next);
+  if (errorHelper.handleValidationError(req, next)) return;
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
@@ -184,7 +184,7 @@ const getUnreadCount: RequestHandler = async (req, res, next) => {
 };
 
 const markRead: RequestHandler<{ id: string }> = async (req, res, next) => {
-  errorHelper.handleValidationError(req, next);
+  if (errorHelper.handleValidationError(req, next)) return;
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
@@ -223,7 +223,7 @@ const markRead: RequestHandler<{ id: string }> = async (req, res, next) => {
 };
 
 const markReadAll: RequestHandler = async (req, res, next) => {
-  errorHelper.handleValidationError(req, next);
+  if (errorHelper.handleValidationError(req, next)) return;
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
@@ -247,7 +247,7 @@ const markReadAll: RequestHandler = async (req, res, next) => {
 };
 
 const deleteNotifications: RequestHandler = async (req, res, next) => {
-  errorHelper.handleValidationError(req, next);
+  if (errorHelper.handleValidationError(req, next)) return;
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
@@ -272,7 +272,7 @@ const deleteNotification: RequestHandler<{ id: string }> = async (
   res,
   next,
 ) => {
-  errorHelper.handleValidationError(req, next);
+  if (errorHelper.handleValidationError(req, next)) return;
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;

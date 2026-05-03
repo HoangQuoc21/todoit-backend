@@ -19,7 +19,7 @@ const getCategories: RequestHandler = async (
   res,
   next,
 ) => {
-  errorHelper.handleValidationError(req as any, next);
+  if (errorHelper.handleValidationError(req as any, next)) return;
 
   try {
     const userId = tokenHelper.parseTokenFromRequestHeader(req as any).userId;
@@ -64,7 +64,7 @@ const getCategories: RequestHandler = async (
 };
 
 const getCategory: RequestHandler<{ id: string }> = async (req, res, next) => {
-  errorHelper.handleValidationError(req, next);
+  if (errorHelper.handleValidationError(req, next)) return;
 
   const { id } = req.params;
   const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
@@ -100,7 +100,7 @@ const createCategory: RequestHandler<
   {},
   { name: string; isPublic: boolean }
 > = async (req, res, next) => {
-  errorHelper.handleValidationError(req, next);
+  if (errorHelper.handleValidationError(req, next)) return;
 
   const { name, isPublic } = req.body;
   const creatorId = tokenHelper.parseTokenFromRequestHeader(req).userId;
@@ -145,7 +145,7 @@ const editCategory: RequestHandler<
   {},
   { name: string; isPublic: boolean }
 > = async (req, res, next) => {
-  errorHelper.handleValidationError(req, next);
+  if (errorHelper.handleValidationError(req, next)) return;
 
   const { id } = req.params;
   const { name, isPublic } = req.body;
@@ -195,7 +195,7 @@ const deleteCategory: RequestHandler<{ id: string }> = async (
   res,
   next,
 ) => {
-  errorHelper.handleValidationError(req, next);
+  if (errorHelper.handleValidationError(req, next)) return;
 
   const { id } = req.params;
   const userId = tokenHelper.parseTokenFromRequestHeader(req).userId;
