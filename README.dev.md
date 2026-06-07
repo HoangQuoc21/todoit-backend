@@ -1,0 +1,90 @@
+# Create project
+
+```bash
+pnpm init -y
+
+pnpm add express cors tsx
+
+pnpm add @types/express @types/cors @types/node typescript -D
+```
+
+# Integrate lint & prettier
+
+```bash
+pnpm create @eslint/config@latest
+
+pnpm add jiti -D
+
+pnpm add eslint-config-prettier eslint-plugin-prettier -D
+```
+
+# Integrate swagger
+
+```bash
+pnpm add swagger-jsdoc swagger-ui-express
+
+pnpm add @types/swagger-jsdoc @types/swagger-ui-express -D
+```
+
+# Run project
+
+```bash
+pnpm install
+
+pnpm start:dev
+```
+
+# Publish image to Docker Hub
+
+```bash
+docker login
+
+docker compose up --d
+
+docker images
+
+# If the image in compose.yaml file is named "<dockerhub_username>/<repository_name>:<tag>" Then doesn't need to run this command
+docker tag <local_image_name>:<local_tag> <dockerhub_username>/<repository_name>:<tag>
+
+docker push <dockerhub_username>/<repository_name>:<tag>
+```
+
+# Push code changes to Docker Hub
+
+```bash
+docker compose build
+
+# Build to test
+docker compose up -d
+
+# The images should be changed
+docker images
+
+docker push <dockerhub_username>/<repository_name>:<tag>
+```
+
+# Let's someone else use the published image
+
+```bash
+docker pull <dockerhub_username>/<repository_name>:<tag>
+
+# Give them the .env and compose.yaml file
+
+docker compose up -d
+```
+
+# Build multi-platform images
+
+```bash
+# Create docker buildx builder (only do this if there is no builder instance)
+docker buildx create --name my-builder --use
+
+# Bootstrap builder
+docker buildx inspect --bootstrap
+
+# Build
+docker buildx build \
+  --platform linux/amd64,linux/arm64 \
+  -t hoangquoc21/todoit:backend-latest \
+  --push .
+```
