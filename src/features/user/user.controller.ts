@@ -35,7 +35,7 @@ const getUser: RequestHandler<{ id: string }> = async (req, res, next) => {
       },
     };
 
-    res.status(status.OK).json(response);
+    return res.status(status.OK).json(response);
   } catch (err) {
     next(errorHelper.createServerError(err as HttpError));
   }
@@ -108,7 +108,7 @@ const editUser: RequestHandler<
       },
     };
 
-    res.status(status.OK).json(response);
+    return res.status(status.OK).json(response);
   } catch (err) {
     next(errorHelper.createServerError(err as HttpError));
   }
@@ -155,7 +155,7 @@ const deleteUser: RequestHandler = async (req, res, next) => {
       data: null,
     };
 
-    res.status(status.OK).json(response);
+    return res.status(status.OK).json(response);
   } catch (err) {
     next(errorHelper.createServerError(err as HttpError));
   }
@@ -190,7 +190,7 @@ const getMe: RequestHandler = async (req, res, next) => {
       },
     };
 
-    res.status(status.OK).json(response);
+    return res.status(status.OK).json(response);
   } catch (err) {
     next(errorHelper.createServerError(err as HttpError));
   }
@@ -227,7 +227,7 @@ const updatePushToken: RequestHandler<{}, {}, { pushToken: string }> = async (
       data: null,
     };
 
-    res.status(status.OK).json(response);
+    return res.status(status.OK).json(response);
   } catch (err) {
     next(errorHelper.createServerError(err as HttpError));
   }

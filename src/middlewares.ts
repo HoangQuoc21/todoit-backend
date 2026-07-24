@@ -7,14 +7,7 @@ import { FORM_FIELDS } from "./constants";
 import { cloudinaryService } from "./services";
 
 const rootHandler: RequestHandler = (req, res, next) => {
-  const response: ApiResponse<string> = {
-    success: true,
-    message: "Welcome to Todoit API",
-    errors: null,
-    data: "API docs is available at /api-docs",
-  };
-
-  res.status(status.OK).json(response);
+  return res.redirect("/api-docs");
 };
 
 const notFoundHandler: RequestHandler = (req, res, next) => {
@@ -28,7 +21,7 @@ const notFoundHandler: RequestHandler = (req, res, next) => {
     data: null,
   };
 
-  res.status(status.NOT_FOUND).json(response);
+  return res.status(status.NOT_FOUND).json(response);
 };
 
 const errorHandler: ErrorRequestHandler = (err: HttpError, req, res, next) => {
@@ -40,7 +33,7 @@ const errorHandler: ErrorRequestHandler = (err: HttpError, req, res, next) => {
     data: null,
   };
 
-  res.status(err.statusCode).json(response);
+  return res.status(err.statusCode).json(response);
 };
 
 const isAuthenticatedHandler: RequestHandler = async (req, res, next) => {

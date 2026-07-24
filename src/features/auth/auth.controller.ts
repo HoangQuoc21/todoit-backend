@@ -48,7 +48,7 @@ const signUp: RequestHandler<
       },
     };
 
-    res.status(status.CREATED).json(response);
+    return res.status(status.CREATED).json(response);
   } catch (err) {
     next(errorHelper.createServerError(err as HttpError));
   }
@@ -104,7 +104,7 @@ const signIn: RequestHandler<
       },
     };
 
-    res.status(status.OK).json(response);
+    return res.status(status.OK).json(response);
   } catch (err) {
     next(errorHelper.createServerError(err as HttpError));
   }
@@ -127,7 +127,7 @@ const signOut: RequestHandler = async (req, res, next) => {
       data: null,
     };
 
-    res.status(status.OK).json(response);
+    return res.status(status.OK).json(response);
   } catch (err) {
     next(errorHelper.createServerError(err as HttpError));
   }

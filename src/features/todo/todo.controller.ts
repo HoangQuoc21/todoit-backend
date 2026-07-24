@@ -67,7 +67,7 @@ const createTodo: RequestHandler<
       },
     };
 
-    res.status(status.CREATED).json(response);
+    return res.status(status.CREATED).json(response);
   } catch (err) {
     next(errorHelper.createServerError(err as HttpError));
   }
@@ -128,7 +128,7 @@ const getTodos: RequestHandler = async (
       },
     };
 
-    res.status(status.OK).json(response);
+    return res.status(status.OK).json(response);
   } catch (err) {
     next(errorHelper.createServerError(err as HttpError));
   }
@@ -179,7 +179,7 @@ const getTodo: RequestHandler<{ id: string }> = async (req, res, next) => {
       },
     };
 
-    res.status(status.OK).json(response);
+    return res.status(status.OK).json(response);
   } catch (err) {
     next(errorHelper.createServerError(err as HttpError));
   }
@@ -221,7 +221,7 @@ const deleteTodo: RequestHandler<{ id: string }> = async (req, res, next) => {
       data: null,
     };
 
-    res.status(status.OK).json(response);
+    return res.status(status.OK).json(response);
   } catch (err) {
     next(errorHelper.createServerError(err as HttpError));
   }
@@ -338,7 +338,7 @@ const editTodo: RequestHandler<
       },
     };
 
-    res.status(status.OK).json(response);
+    return res.status(status.OK).json(response);
   } catch (err) {
     next(errorHelper.createServerError(err as HttpError));
   }
@@ -398,7 +398,7 @@ const toggleCompleted: RequestHandler<
       },
     };
 
-    res.status(status.OK).json(response);
+    return res.status(status.OK).json(response);
   } catch (err) {
     next(errorHelper.createServerError(err as HttpError));
   }
