@@ -48,7 +48,7 @@ The application is built for seamless deployment in production environments:
 
 The project includes interactive API documentation generated directly from annotations in the codebase. When the server is running, you can explore, test, and integrate with the endpoints using the built-in interface:
 
-* **Local URL:** `http://localhost:<PORT>/api-docs`
+**Local URL:** `http://localhost:<PORT>/api-docs`
 
 ---
 
@@ -59,8 +59,8 @@ Follow these steps to run the project locally on your machine.
 ### Prerequisites
 
 Ensure you have the following installed:
-- Node.js (version specified in `.nvmrc`)
-- A package manager (e.g., `pnpm`)
+
+- [Bun](https://bun.sh) (v1.0 or higher)
 - Access to a running database instance (local or cloud-hosted)
 
 ### 1. Clone the Repository
@@ -91,7 +91,7 @@ CLOUDINARY_FOLDER_NAME=todoit
 Install the project dependencies using your package manager:
 
 ```bash
-pnpm install
+bun install
 ```
 
 ### 4. Run the Application
@@ -99,7 +99,7 @@ pnpm install
 Start the server in development mode with hot-reloading:
 
 ```bash
-pnpm start
+bun dev
 ```
 
 Once started, the backend server will run at `http://localhost:3000` (or your configured `PORT`), and the interactive documentation will be available at `http://localhost:3000/api-docs`.

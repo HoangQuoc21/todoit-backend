@@ -11,6 +11,7 @@ services:
   server:
     container_name: todoit-backend
     image: hoangquoc21/todoit:backend-latest
+    build: .
     restart: always
     env_file:
       - .env

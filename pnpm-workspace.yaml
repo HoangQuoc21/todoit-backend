@@ -1,6 +1,0 @@
-onlyBuiltDependencies:
-  - '@scarf/scarf'
-  - bcrypt
-  - core-js
-  - esbuild
-  - husky
