@@ -1,5 +1,5 @@
 #!/bin/bash
-# This script is used to update the n8n service hosted with docker compose
+# This script is used to update the docker service hosted with docker compose
 # Note: 
 # - You must grant execute permissions to this script before running it (chmod +x update.sh)
 # - You must run this script from the directory where your compose.yml file is located
@@ -32,7 +32,7 @@ if ! docker info > /dev/null 2>&1; then
     exit 1
 fi
 
-echo "Starting n8n update process..."
+echo "Starting docker update process..."
 
 # Actual update process
 docker compose pull
@@ -41,4 +41,4 @@ docker compose down
 
 docker compose up -d
 
-echo "n8n update process completed successfully."
+echo "docker update process completed successfully."
