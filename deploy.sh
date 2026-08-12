@@ -39,7 +39,7 @@ echo "Pulling latest changes from repository..."
 git pull || echo "Notice: 'git pull' was skipped or failed. Proceeding with current local files..."
 
 echo "Rebuilding and restarting docker service..."
-docker compose up -d --build
+docker compose up -d --build --pull always
 
 echo "Cleaning up dangling images..."
 docker image prune -f
