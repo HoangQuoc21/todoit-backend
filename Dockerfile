@@ -17,8 +17,11 @@ COPY --chown=bun:bun . .
 # Run the application as a non-root user.
 USER bun
 
+# Default port if not provided by environment
+ENV PORT=3000
+
 # Expose the port that the application listens on.
-EXPOSE 3000
+EXPOSE ${PORT}
 
 # Run the application.
 ENTRYPOINT ["bun", "start:prod"]
