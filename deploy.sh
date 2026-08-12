@@ -1,9 +1,9 @@
 #!/bin/bash
-# This script is used to update the docker service hosted with docker compose
+# This script is used to deploy/update the docker service hosted with docker compose
 # Note: 
-# - You must grant execute permissions to this script before running it (chmod +x update.sh)
+# - You must grant execute permissions to this script before running it (chmod +x deploy.sh)
 # - You must run this script from the directory where your compose.yml file is located
-# - Running script command: ./update.sh 
+# - Running script command: ./deploy.sh 
 
 # Exit immediately if a command exits with a non-zero status, if an undefined variable is used, or if any command in a pipeline fails
 set -Eeuo pipefail
@@ -32,13 +32,16 @@ if ! docker info > /dev/null 2>&1; then
     exit 1
 fi
 
-echo "Starting docker update process..."
+echo "Starting deployment process..."
 
 # Actual update process
-docker compose pull
+echo "Pulling latest changes from repository..."
+git pull || echo "Notice: 'git pull' was skipped or failed. Proceeding with current local files..."
 
-docker compose down
+echo "Rebuilding and restarting docker service..."
+docker compose up -d --build
 
-docker compose up -d
+echo "Cleaning up dangling images..."
+docker image prune -f
 
-echo "docker update process completed successfully."
+echo "Deployment process completed successfully."

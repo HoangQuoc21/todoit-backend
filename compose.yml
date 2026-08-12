@@ -8,9 +8,8 @@
 # database or a cache. For examples, see the Awesome Compose repository:
 # https://github.com/docker/awesome-compose
 services:
-  server:
-    container_name: todoit-backend
-    image: hoangquoc21/todoit:backend-latest
+  todoit-backend:
+    image: todoit-backend:latest
     build: .
     restart: always
     env_file:

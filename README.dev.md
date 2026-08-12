@@ -47,9 +47,7 @@ docker compose logs -f
 docker compose down
 ```
 
-# Publish Multi-Platform Image to Docker Hub (Recommended)
-
-This builds the image for both `linux/amd64` (x86_64 servers) and `linux/arm64` (Apple Silicon / ARM servers) and pushes it to Docker Hub in a single command.
+# Optional: Publish Multi-Platform Image to Docker Hub
 
 ```bash
 # 1. Login to Docker Hub
@@ -62,13 +60,14 @@ docker buildx inspect --bootstrap
 # 3. Build & push multi-arch image
 docker buildx build \
   --platform linux/amd64,linux/arm64 \
-  -t hoangquoc21/todoit:backend-latest \
+  -t todoit-backend:latest \
   --push .
 ```
 
-# Run published image on another machine
+# VPS Deployment
 
 ```bash
-# Provide .env and compose.yaml file to destination server, then run:
-docker compose up -d
+# On your VPS (with repository cloned and .env configured), run:
+chmod +x deploy.sh
+./deploy.sh
 ```
