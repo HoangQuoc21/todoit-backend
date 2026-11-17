@@ -19,8 +19,10 @@ import {
 dotenv.config({ override: true, debug: true });
 cloudinaryService.config();
 
-const PORT = process.env.PORT!;
-const DATABASE_NAME = process.env.DATABASE_NAME!;
+const BE_PORT = process.env.BE_PORT;
+const MONGO_HOST = process.env.MONGO_HOST || "127.0.0.1";
+const MONGODB_URI = `mongodb://${MONGO_HOST}:27017`;
+const DATABASE_NAME = process.env.MONGO_INITDB_DATABASE;
 
 const app = express();
 
@@ -45,14 +47,19 @@ app.use(middlewares.notFoundHandler);
 app.use(middlewares.errorHandler);
 
 try {
-  await mongoose.connect(process.env.MONGODB_URI!, {
+  await mongoose.connect(MONGODB_URI, {
     dbName: DATABASE_NAME,
+    authSource: "admin",
+    auth: {
+      username: process.env.MONGO_INITDB_ROOT_USERNAME,
+      password: process.env.MONGO_INITDB_ROOT_PASSWORD,
+    },
   });
   console.log(`--> Connected to MongoDB database: ${DATABASE_NAME}`);
-  app.listen(PORT, () => {
-    console.log(`--> Todoit server is running on http://localhost:${PORT}`);
+  app.listen(BE_PORT, () => {
+    console.log(`--> Todoit server is running on http://localhost:${BE_PORT}`);
     console.log(
-      `--> API documentation available at http://localhost:${PORT}/api-docs`,
+      `--> API documentation available at http://localhost:${BE_PORT}/api-docs`,
     );
   });
 } catch (err) {

@@ -8,14 +8,30 @@
 # database or a cache. For examples, see the Awesome Compose repository:
 # https://github.com/docker/awesome-compose
 services:
-  server:
+  backend-server:
     image: todoit-backend:latest
     build: .
     restart: on-failure
-    env_file:
-      - .env
+    environment:
+      # In Docker, containers communicate over an internal network using service names as hostnames.
+      # 'MONGO_HOST: mongodb' tells backend-server to resolve the 'mongodb' service instead of 127.0.0.1.
+      # (When running the backend directly in your terminal, MONGO_HOST is unset and defaults to 127.0.0.1 in app.ts).
+      MONGO_HOST: mongodb
+      BE_PORT: ${BE_PORT:?Variable BE_PORT is missing or empty in .env}
+      HASHING_SALT: ${HASHING_SALT:?Variable HASHING_SALT is missing or empty in .env}
+      EXPO_ACCESS_TOKEN: ${EXPO_ACCESS_TOKEN:?Variable EXPO_ACCESS_TOKEN is missing or empty in .env}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:?Variable CLOUDINARY_CLOUD_NAME is missing or empty in .env}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:?Variable CLOUDINARY_API_KEY is missing or empty in .env}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:?Variable CLOUDINARY_API_SECRET is missing or empty in .env}
+      CLOUDINARY_FOLDER_NAME: ${CLOUDINARY_FOLDER_NAME:?Variable CLOUDINARY_FOLDER_NAME is missing or empty in .env}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:?Variable MONGO_INITDB_ROOT_USERNAME is missing or empty in .env}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:?Variable MONGO_INITDB_ROOT_PASSWORD is missing or empty in .env}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE:?Variable MONGO_INITDB_DATABASE is missing or empty in .env}
     ports:
-      - ${PORT}:${PORT} # Getting the actual exposed port from .env file
+      - ${BE_PORT}:${BE_PORT} # Getting the actual exposed port from .env file
+    depends_on:
+      mongodb:
+        condition: service_healthy
     deploy:
       resources:
         limits:
@@ -24,6 +40,49 @@ services:
         reservations:
           cpus: "0.25"
           memory: 256M
+
+  mongodb:
+    # Pin a specific major version to avoid unexpected breaking changes from :latest
+    image: mongo:7.0
+
+    # Automatically restart on failure or system reboot, unless explicitly stopped by docker compose down
+    restart: unless-stopped
+
+    # Map the standard MongoDB port (27017:27017).
+    # - Left (host): Port exposed to your host machine (e.g. for terminal dev running against this container).
+    # - Right (container): Port MongoDB listens on internally.
+    # Other Docker containers (like backend-server) talk to this container directly on internal port 27017.
+    ports:
+      - "27017:27017"
+
+    # Explicitly declare required container environment variables from .env.
+    # The ':?error_message' syntax enforces that Docker Compose halts immediately if any variable is unset or empty.
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:?Variable MONGO_INITDB_ROOT_USERNAME is missing or empty in .env}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:?Variable MONGO_INITDB_ROOT_PASSWORD is missing or empty in .env}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE:?Variable MONGO_INITDB_DATABASE is missing or empty in .env}
+
+    volumes:
+      # Persistent named volume storing the actual MongoDB database files
+      - mongo_data:/data/db
+
+    # Healthcheck allows dependent services (e.g. backend apps) to wait until MongoDB is truly ready
+    healthcheck:
+      test: [
+          "CMD-SHELL",
+          # Uses mongosh (MongoDB 6+) to ping the admin database and check server responsiveness
+          "mongosh --quiet --eval 'db.adminCommand({ ping: 1 })' || exit 1",
+        ]
+      interval: 10s # Run healthcheck every 10 seconds
+      timeout: 5s # Fail check if it takes longer than 5 seconds
+      retries: 5 # Number of consecutive failures before marking container unhealthy
+      start_period: 15s # Grace period for MongoDB to finish boot/init before health checks count
+
+volumes:
+  # Local persistent volume definition scoped automatically by Docker Compose project name
+  mongo_data:
+    driver: local
+
 # The commented out section below is an example of how to define a PostgreSQL
 # database that your application can use. `depends_on` tells Docker Compose to
 # start the database before your application. The `db-data` volume persists the

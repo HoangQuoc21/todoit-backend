@@ -75,15 +75,16 @@ cd todoit-backend
 Create a `.env` file in the root directory and define the following variables (refer to `.env.sample` for details):
 
 ```env
-PORT=3000
-MONGODB_URI=mongodb://localhost:27017
-DATABASE_NAME=todoit
+BE_PORT=3000
 HASHING_SALT=10
 EXPO_ACCESS_TOKEN=your_notification_token_here
 CLOUDINARY_CLOUD_NAME=your_cloud_name_here
 CLOUDINARY_API_KEY=your_api_key_here
 CLOUDINARY_API_SECRET=your_api_secret_here
 CLOUDINARY_FOLDER_NAME=todoit
+MONGO_INITDB_ROOT_USERNAME=admin
+MONGO_INITDB_ROOT_PASSWORD=your_secure_password
+MONGO_INITDB_DATABASE=todoit_db
 ```
 
 ### 3. Install Dependencies
@@ -96,7 +97,21 @@ bun install
 
 ### 4. Run the Application
 
-Start the server in development mode with hot-reloading:
+#### Recommended Local Dev Workflow (Fast iteration)
+1. Start MongoDB via Docker in the background:
+   ```bash
+   docker compose up mongodb -d
+   ```
+2. Start the backend in development mode with hot-reloading:
+   ```bash
+   bun start:dev
+   ```
+
+#### Full Docker Compose (Simulate Production / VPS)
+Run both backend and database containers:
+```bash
+docker compose up -d --build
+```
 
 ```bash
 bun dev
