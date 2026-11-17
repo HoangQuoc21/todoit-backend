@@ -28,7 +28,8 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:?Variable MONGO_INITDB_ROOT_PASSWORD is missing or empty in .env}
       MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE:?Variable MONGO_INITDB_DATABASE is missing or empty in .env}
     ports:
-      - ${BE_PORT}:${BE_PORT} # Getting the actual exposed port from .env file
+      # Binding to 127.0.0.1 restricts access to the local machine / reverse proxy only (security best practice).
+      - "127.0.0.1:${BE_PORT}:${BE_PORT}" # Getting the actual exposed port from .env file
     depends_on:
       mongodb:
         condition: service_healthy
@@ -48,12 +49,13 @@ services:
     # Automatically restart on failure or system reboot, unless explicitly stopped by docker compose down
     restart: unless-stopped
 
-    # Map the standard MongoDB port (27017:27017).
-    # - Left (host): Port exposed to your host machine (e.g. for terminal dev running against this container).
-    # - Right (container): Port MongoDB listens on internally.
-    # Other Docker containers (like backend-server) talk to this container directly on internal port 27017.
+    # Map the standard MongoDB port on localhost (127.0.0.1:27017:27017).
+    # - Binding to 127.0.0.1 prevents MongoDB from being exposed to the public internet/LAN.
+    # - Host (127.0.0.1:27017): Port exposed locally for terminal dev running against this container.
+    # - Container (27017): Port MongoDB listens on internally.
+    # Other Docker containers (like backend-server) talk to this container directly on internal port 27017 via the Docker network.
     ports:
-      - "27017:27017"
+      - "127.0.0.1:27017:27017"
 
     # Explicitly declare required container environment variables from .env.
     # The ':?error_message' syntax enforces that Docker Compose halts immediately if any variable is unset or empty.

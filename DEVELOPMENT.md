@@ -39,8 +39,9 @@ docker compose up mongodb -d
 bun install
 bun start:dev
 ```
-> **How it works:**
-> - When run directly in terminal, `app.ts` connects to `127.0.0.1:27017` (which routes into the Docker MongoDB container via the exposed port).
+> **How it works & Security:**
+> - When run directly in terminal, `app.ts` connects to `127.0.0.1:27017` (which routes into the Docker MongoDB container via the loopback port).
+> - **Security best practice**: Port mappings in `compose.yml` are bound to `127.0.0.1` (`127.0.0.1:27017:27017` and `127.0.0.1:${BE_PORT}:${BE_PORT}`) to prevent MongoDB and the application port from being exposed to the public internet or local network without going through a local reverse proxy (e.g. Nginx/Caddy).
 > - Credentials are passed via Mongoose options (`auth: { username, password }`) rather than embedded in the URI to prevent parsing errors with special characters (`@`, `#`, `%`).
 
 ---
